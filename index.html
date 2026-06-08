@@ -600,6 +600,13 @@ dd {
   gap: 12px;
 }
 
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 .primary-button,
 .secondary-button,
 .danger-button {
@@ -1046,6 +1053,7 @@ dd {
   justify-items: center;
 }
 
+.plan-edit-button,
 .plan-delete-button,
 .fertilizer-delete-button {
   border: 1px solid rgba(171, 67, 67, 0.28);
@@ -1055,6 +1063,17 @@ dd {
   color: #9b2f2f;
   font-weight: 850;
   cursor: pointer;
+}
+
+.plan-edit-button {
+  border-color: rgba(40, 97, 72, 0.28);
+  background: #f2f8ef;
+  color: var(--green);
+}
+
+.plan-edit-button:hover {
+  border-color: rgba(40, 97, 72, 0.5);
+  background: #e3f2df;
 }
 
 .plan-delete-button:hover,
@@ -1803,7 +1822,10 @@ dd {
                 备注
                 <textarea id="taskNote" rows="3" placeholder="用量、肥料品牌、浇水量、注意事项"></textarea>
               </label>
-              <button class="primary-button" type="submit">加入本周计划</button>
+              <div class="form-actions">
+                <button class="primary-button" id="taskSubmitButton" type="submit">加入本周计划</button>
+                <button class="secondary-button" id="taskCancelEditButton" type="button" hidden>取消修改</button>
+              </div>
             </form>
           </section>
 
@@ -1983,6 +2005,8 @@ const els = {
   taskRepeat: document.querySelector("#taskRepeat"),
   taskTitle: document.querySelector("#taskTitle"),
   taskNote: document.querySelector("#taskNote"),
+  taskSubmitButton: document.querySelector("#taskSubmitButton"),
+  taskCancelEditButton: document.querySelector("#taskCancelEditButton"),
   calendarDate: document.querySelector("#calendarDate"),
   weekTitle: document.querySelector("#weekTitle"),
   weeklyPlan: document.querySelector("#weeklyPlan"),
@@ -2422,6 +2446,7 @@ function bindEvents() {
     event.preventDefault();
     addTask();
   });
+  els.taskCancelEditButton.addEventListener("click", resetTaskForm);
 
   els.fertilizerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -2518,23 +2543,43 @@ function addTask() {
 
   const type = els.taskType.value;
   const title = els.taskTitle.value.trim() || `${plant.name} ${type}`;
-  const task = {
-    id: crypto.randomUUID(),
+  const editingId = els.taskForm.dataset.editing;
+  const existing = editingId ? state.tasks.find((task) => task.id === editingId) : null;
+  const taskData = {
     plantId: plant.id,
     type,
     title,
     dueDate: els.taskDate.value || todayIso(),
     repeat: els.taskRepeat.value,
     note: els.taskNote.value.trim(),
-    done: false,
-    completedAt: "",
   };
-  Object.assign(task, inferCareDetails(task, plant));
-  state.tasks.push(task);
 
+  if (existing) {
+    Object.assign(existing, taskData);
+    Object.assign(existing, inferCareDetails(existing, plant));
+    delete existing.customContent;
+    delete existing.customEffect;
+  } else {
+    const task = {
+      id: crypto.randomUUID(),
+      ...taskData,
+      done: false,
+      completedAt: "",
+    };
+    Object.assign(task, inferCareDetails(task, plant));
+    state.tasks.push(task);
+  }
+
+  resetTaskForm();
+  persistAndRender();
+}
+
+function resetTaskForm() {
+  delete els.taskForm.dataset.editing;
   els.taskForm.reset();
   els.taskDate.value = todayIso();
-  persistAndRender();
+  els.taskSubmitButton.textContent = "加入本周计划";
+  els.taskCancelEditButton.hidden = true;
 }
 
 async function addFertilizer() {
@@ -2827,6 +2872,11 @@ function renderWeeklyPlan() {
       deletePlanTasks(button.dataset.taskIds);
     });
   });
+  board.querySelectorAll(".plan-edit-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      beginEditTask(button.dataset.taskId);
+    });
+  });
   els.weeklyPlan.append(board);
 }
 
@@ -2918,6 +2968,7 @@ function renderPlanDone(task, groupedTasks = [task]) {
         <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
         <span>${allDone ? "已完成" : "未完成"}</span>
       </label>
+      <button class="plan-edit-button" type="button" data-task-id="${escapeHtml(task.id)}">修改</button>
       <button class="plan-delete-button" type="button" data-task-ids="${escapeHtml(taskIds)}">删除</button>
     </div>
   `;
@@ -3227,7 +3278,23 @@ function deletePlanTasks(taskIds) {
   const ids = new Set(String(taskIds || "").split(",").filter(Boolean));
   if (!ids.size) return;
   state.tasks = state.tasks.filter((task) => !ids.has(task.id));
+  if (ids.has(els.taskForm.dataset.editing)) resetTaskForm();
   persistAndRender();
+}
+
+function beginEditTask(taskId) {
+  const task = state.tasks.find((item) => item.id === taskId);
+  if (!task) return;
+  els.taskForm.dataset.editing = task.id;
+  els.taskType.value = task.type || "浇水";
+  els.taskDate.value = task.dueDate || todayIso();
+  els.taskRepeat.value = task.repeat || "none";
+  els.taskTitle.value = task.title || "";
+  els.taskNote.value = task.note || "";
+  els.taskSubmitButton.textContent = "保存修改";
+  els.taskCancelEditButton.hidden = false;
+  els.taskForm.scrollIntoView({ behavior: "smooth", block: "center" });
+  requestAnimationFrame(() => els.taskTitle.focus());
 }
 
 function updatePlanField(taskIds, field, value) {
