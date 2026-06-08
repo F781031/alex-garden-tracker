@@ -1,0 +1,3370 @@
+<!-- Alex Garden Tracker Lite: single file, no external folders required. Open with Edge or Chrome. -->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alex 植物养护计划</title>
+    <style>
+:root {
+  --bg: #f4f6f1;
+  --panel: #ffffff;
+  --panel-soft: #fbfaf5;
+  --ink: #17211b;
+  --muted: #647267;
+  --line: #dce2d7;
+  --green: #286148;
+  --green-soft: #e0eee6;
+  --moss: #7b8f45;
+  --clay: #c86b47;
+  --blue: #4f7b92;
+  --sun: #f2bd5e;
+  --danger: #b54f44;
+  --shadow: 0 18px 45px rgba(29, 47, 35, 0.13);
+  color-scheme: light;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(244, 246, 241, 0.95)),
+    var(--bg);
+  color: var(--ink);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  padding: 18px 18px 0;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 210px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  background: #dce2d7;
+}
+
+.hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 29, 19, 0.72), rgba(10, 29, 19, 0.18) 52%, rgba(10, 29, 19, 0.42)),
+    linear-gradient(0deg, rgba(10, 29, 19, 0.4), rgba(10, 29, 19, 0.05));
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 210px;
+  padding: 28px;
+  color: #fff;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+.avatar-picker {
+  position: relative;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.74);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.avatar-picker input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar-picker img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-picker.has-image img {
+  display: block;
+}
+
+.avatar-picker.has-image span {
+  display: none;
+}
+
+.avatar-picker span {
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.eyebrow,
+.label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 680px;
+  margin-bottom: 0;
+  font-size: 3.35rem;
+  line-height: 1.05;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+h3 {
+  margin-bottom: 0;
+  font-size: 1.08rem;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px;
+  align-items: start;
+}
+
+.sidebar,
+.main-panel {
+  min-width: 0;
+}
+
+.sidebar {
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 12px 28px rgba(34, 53, 38, 0.08);
+}
+
+.sidebar {
+  padding: 16px;
+}
+
+.panel-title,
+.section-heading,
+.profile-head,
+.calendar-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.section-heading {
+  margin-bottom: 14px;
+}
+
+.section-heading.tight {
+  margin-bottom: 10px;
+}
+
+.list-tools {
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--green);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.icon-button:hover,
+.secondary-button:hover,
+.primary-button:hover,
+.tab:hover,
+.segment:hover {
+  filter: brightness(0.98);
+}
+
+.search-box,
+form label,
+.calendar-tools label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+}
+
+input,
+select {
+  height: 42px;
+  padding: 0 12px;
+}
+
+input[type="file"] {
+  height: 44px;
+  overflow: hidden;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 44px;
+}
+
+input[type="file"]::file-selector-button {
+  height: 44px;
+  margin: 0 12px 0 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 8px 0 0 8px;
+  padding: 0 16px;
+  background: var(--green-soft);
+  color: var(--green);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  height: 44px;
+  margin: 0 12px 0 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 8px 0 0 8px;
+  padding: 0 16px;
+  background: var(--green-soft);
+  color: var(--green);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 92px;
+  padding: 11px 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(40, 97, 72, 0.75);
+  box-shadow: 0 0 0 3px rgba(40, 97, 72, 0.13);
+}
+
+.plant-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.plant-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.plant-card.active {
+  border-color: rgba(40, 97, 72, 0.65);
+  background: var(--green-soft);
+}
+
+.plant-select {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 9px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.plant-card img,
+.plant-placeholder {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: linear-gradient(135deg, var(--green), var(--moss));
+}
+
+.plant-summary {
+  min-width: 0;
+}
+
+.plant-summary strong {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+}
+
+.plant-summary span {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.79rem;
+}
+
+.main-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 28px rgba(34, 53, 38, 0.08);
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 12px 12px 0;
+}
+
+.tab,
+.segment {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  color: var(--muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tab {
+  padding: 0 15px;
+}
+
+.tab.active,
+.segment.active {
+  border-color: rgba(40, 97, 72, 0.7);
+  background: var(--green);
+  color: #fff;
+}
+
+.browser-warning {
+  margin: 14px 16px 0;
+  border: 1px solid #e8b24c;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fff7dc;
+  color: #7a4a00;
+  font-weight: 850;
+  line-height: 1.55;
+}
+
+.browser-warning span {
+  display: block;
+  margin-top: 4px;
+  color: #68562b;
+  font-size: 0.9rem;
+}
+
+.js-ready .browser-warning {
+  display: none;
+}
+
+.view {
+  display: none;
+  padding: 16px;
+}
+
+.active-view {
+  display: block;
+}
+
+.plant-profile {
+  display: grid;
+  grid-template-columns: minmax(240px, 36%) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.profile-photo-wrap {
+  position: relative;
+  min-height: 270px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #e6ecdf;
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  min-height: 270px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-action {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--green);
+  font-weight: 850;
+  box-shadow: 0 10px 24px rgba(22, 31, 25, 0.16);
+}
+
+.photo-action input,
+.import-label input {
+  display: none;
+}
+
+.profile-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 270px;
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.profile-delete-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.profile-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.profile-meta div {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+dt {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+dd {
+  overflow-wrap: anywhere;
+  margin: 5px 0 0;
+  font-weight: 800;
+}
+
+.notes {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.section-band {
+  margin-top: 18px;
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(224, 238, 230, 0.45), rgba(255, 255, 255, 0));
+}
+
+.export-band {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.entry-form,
+.plant-form {
+  display: grid;
+  gap: 13px;
+}
+
+.add-page {
+  display: grid;
+  gap: 18px;
+}
+
+.add-view .plant-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.add-view .plant-form label:last-of-type,
+.add-view .plant-form .full {
+  grid-column: 1 / -1;
+}
+
+.entry-form {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 0 15px;
+  font-weight: 850;
+}
+
+.primary-button {
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.primary-button.full {
+  width: 100%;
+}
+
+.secondary-button.full {
+  width: 100%;
+}
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--green);
+}
+
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f1d5d1;
+  background: #fff6f4;
+  color: var(--danger);
+  font-weight: 850;
+}
+
+.timeline {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.daily-growth-fields {
+  display: grid;
+  grid-template-columns: minmax(240px, 360px);
+  gap: 12px;
+}
+
+.growth-upload-field input[type="file"] {
+  min-height: 44px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 130px minmax(280px, 38%) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+  min-height: 270px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.timeline-date {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  border-right: 1px solid var(--line);
+  padding-right: 14px;
+  color: var(--green);
+  font-weight: 900;
+}
+
+.timeline-date span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.timeline-image-wrap {
+  min-width: 0;
+}
+
+.timeline-body {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+.timeline-body p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 850;
+  line-height: 1.55;
+}
+
+.timeline-image {
+  width: 100%;
+  height: 100%;
+  min-height: 270px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.timeline-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 270px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, transparent 42%, rgba(40, 97, 72, 0.25) 43% 56%, transparent 57%),
+    radial-gradient(circle at 35% 42%, var(--moss) 0 26%, transparent 27%),
+    radial-gradient(circle at 64% 48%, var(--green) 0 29%, transparent 30%),
+    #eaf1e6;
+}
+
+.task-list {
+  display: grid;
+  gap: 10px;
+}
+
+.task-list.compact {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.overview-board {
+  margin-top: 0;
+}
+
+.overview-task-list {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.task-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.task-row.done {
+  opacity: 0.72;
+}
+
+.task-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--green);
+}
+
+.task-copy {
+  min-width: 0;
+}
+
+.task-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  overflow-wrap: anywhere;
+  font-weight: 900;
+}
+
+.task-meta,
+.task-note {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 999px;
+  padding: 0 9px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.badge.water {
+  background: #e1f0f4;
+  color: var(--blue);
+}
+
+.badge.feed {
+  background: #faeadf;
+  color: var(--clay);
+}
+
+.badge.overdue {
+  background: #f8e1de;
+  color: var(--danger);
+}
+
+.delete-button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #f7ece9;
+  color: var(--danger);
+  font-weight: 900;
+}
+
+.journal-list {
+  display: grid;
+  gap: 10px;
+}
+
+.journal-item {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.journal-date {
+  color: var(--green);
+  font-size: 0.84rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.journal-copy {
+  min-width: 0;
+}
+
+.journal-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.journal-title strong,
+.journal-copy p {
+  overflow-wrap: anywhere;
+}
+
+.journal-copy p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.journal-extra {
+  color: var(--ink);
+}
+
+.week-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.week-heading label {
+  display: grid;
+  gap: 7px;
+  min-width: 180px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.week-grid {
+  display: block;
+}
+
+.plan-board {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.plan-board-title {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 90px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  text-align: center;
+}
+
+.plan-board-title h3 {
+  margin: 0;
+  color: #0d5428;
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+
+.vine-mark {
+  height: 36px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 22% 55%, #f59b25 0 12px, transparent 13px),
+    radial-gradient(circle at 37% 56%, #df7a20 0 12px, transparent 13px),
+    radial-gradient(circle at 52% 52%, #f4a535 0 12px, transparent 13px),
+    radial-gradient(circle at 78% 40%, #3d8c2f 0 10px, transparent 11px),
+    linear-gradient(135deg, transparent 0 44%, #276f31 45% 52%, transparent 53%);
+}
+
+.vine-mark.right {
+  transform: scaleX(-1);
+}
+
+.plan-scroll {
+  overflow-x: auto;
+}
+
+.care-table {
+  width: 100%;
+  min-width: 1280px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.care-table th,
+.care-table td {
+  border: 1px solid #8ab8b2;
+  padding: 12px;
+  vertical-align: top;
+  text-align: center;
+}
+
+.care-table thead th {
+  background: #0d6da0;
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.care-table thead th:nth-child(2),
+.care-table thead th:nth-child(7) {
+  background: #257c25;
+}
+
+.care-table thead th:nth-child(4) {
+  background: #f1841d;
+}
+
+.care-table thead small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.care-table .row-label {
+  width: 116px;
+  background: #eef8ef;
+  color: #14532d;
+  font-size: 0.94rem;
+  font-weight: 900;
+  vertical-align: middle;
+}
+
+.care-table .row-label small {
+  display: block;
+  margin-top: 5px;
+  color: #22577a;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.care-table .blank {
+  background: #f7fbf2;
+}
+
+.care-table td {
+  min-height: 116px;
+  background: #fbfefe;
+}
+
+.care-table td p {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.care-table tbody tr:nth-child(2) td {
+  background: #f8fbff;
+}
+
+.care-table tbody tr:nth-child(3) td {
+  background: #f7f6ff;
+}
+
+.care-table tbody tr:nth-child(4) td {
+  background: #f8fff4;
+}
+
+.plan-task-line {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.plan-task-line.done {
+  opacity: 0.68;
+}
+
+.plan-task-line strong {
+  display: block;
+  padding-left: 8px;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.plan-task-line span:not(.water-visual):not(.leaf-visual):not(.fertilizer-visual):not(.fertilizer-chip-row):not(.fertilizer-chip) {
+  display: block;
+  margin-top: 4px;
+  padding-left: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.fertilizer-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.fertilizer-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 66px;
+  height: 40px;
+  border-radius: 10px;
+  padding: 5px 8px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.fertilizer-chip b {
+  display: block;
+  width: 100%;
+  font-size: 0.78rem;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.fertilizer-chip small {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.fertilizer-chip.fish {
+  background: #fff1d8;
+  color: #a84d10;
+}
+
+.fertilizer-chip.morbloom {
+  background: #efe7ff;
+  color: #6c3aa8;
+}
+
+.fertilizer-chip.cal-mag {
+  background: #ffe8e5;
+  color: #b33d32;
+}
+
+.plan-check-line {
+  display: inline-grid;
+  justify-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 850;
+}
+
+.plan-check-line.done {
+  color: var(--green);
+}
+
+.plan-check-line input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--green);
+}
+
+.water-visual,
+.leaf-visual,
+.fertilizer-visual {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  justify-self: center;
+  margin-top: 1px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), 0 6px 14px rgba(33, 55, 41, 0.1);
+}
+
+.water-visual {
+  border-color: #9bd4ec;
+  background: linear-gradient(180deg, #f0fbff, #d1effb);
+}
+
+.water-visual::before {
+  content: "";
+  width: 18px;
+  height: 25px;
+  border-radius: 50% 50% 58% 58% / 34% 34% 66% 66%;
+  background: linear-gradient(180deg, #8de1fb 0%, #35a9dd 50%, #176fa9 100%);
+  clip-path: polygon(50% 0, 66% 21%, 83% 45%, 90% 65%, 81% 84%, 64% 97%, 50% 100%, 36% 97%, 19% 84%, 10% 65%, 17% 45%, 34% 21%);
+  box-shadow: inset 4px 5px 7px rgba(255, 255, 255, 0.44), 0 2px 5px rgba(24, 116, 166, 0.22);
+}
+
+.water-visual::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 15px;
+  width: 5px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  transform: rotate(22deg);
+}
+
+.fertilizer-visual {
+  border-color: #d4aa58;
+  background: linear-gradient(180deg, #fff8e6, #f1dfb9);
+}
+
+.fertilizer-visual::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 6px;
+  width: 28px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 40'%3E%3Cpolygon points='10,0 18,5 18,14 10,19 2,14 2,5' fill='%23f2b43f' stroke='%23fff7df' stroke-width='1.4'/%3E%3Cpolygon points='30,0 38,5 38,14 30,19 22,14 22,5' fill='%232f8d48' stroke='%23fff7df' stroke-width='1.4'/%3E%3Cpolygon points='20,10 28,15 28,24 20,29 12,24 12,15' fill='%23e25a2c' stroke='%23fff7df' stroke-width='1.4'/%3E%3Cpolygon points='10,20 18,25 18,34 10,39 2,34 2,25' fill='%232176b9' stroke='%23fff7df' stroke-width='1.4'/%3E%3Cpolygon points='30,20 38,25 38,34 30,39 22,34 22,25' fill='%237b58c9' stroke='%23fff7df' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  filter: drop-shadow(0 3px 4px rgba(86, 58, 15, 0.2));
+}
+
+.fertilizer-visual::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.leaf-visual {
+  border-color: #b9d6a0;
+  background: linear-gradient(180deg, #f1fae9, #dff0cf);
+}
+
+.leaf-visual::before {
+  content: "";
+  width: 19px;
+  height: 22px;
+  border-radius: 70% 0 70% 0;
+  background: linear-gradient(135deg, #88bd42, #2d7735);
+  transform: rotate(-22deg);
+}
+
+.leaf-visual::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.66);
+  transform: rotate(-42deg);
+}
+
+.muted-cell {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.time-cell {
+  color: #22577a;
+  font-weight: 900;
+}
+
+.care-table .today {
+  box-shadow: inset 0 0 0 3px rgba(242, 189, 94, 0.35);
+}
+
+.care-detail {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.care-detail strong {
+  color: var(--ink);
+}
+
+.care-entry {
+  margin-top: 10px;
+}
+
+.fertilizer-guide {
+  margin: 14px 0 0;
+}
+
+.plan-support {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.plan-support > h3 {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin: 0;
+  border-radius: 8px;
+  padding: 9px 18px;
+  background: var(--green);
+  color: #fff;
+}
+
+.fertilizer-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.fertilizer-card {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.fertilizer-card.high-potassium {
+  border-color: #e4a03a;
+}
+
+.fertilizer-card.cal-mag {
+  border-color: #cc6b74;
+}
+
+.fertilizer-card h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+.fertilizer-name.fish {
+  color: #a84d10;
+}
+
+.fertilizer-name.high-potassium {
+  color: #6c3aa8;
+}
+
+.fertilizer-name.cal-mag {
+  color: #b33d32;
+}
+
+.fertilizer-card p {
+  grid-column: 2;
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.fertilizer-card .npk {
+  margin-top: -5px;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.fertilizer-english {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.fertilizer-photo {
+  grid-row: span 6;
+  width: 78px;
+  height: 112px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f4f6f1;
+}
+
+.product-visual {
+  grid-row: span 5;
+  width: 78px;
+  height: 112px;
+  border: 2px solid #d7d7d7;
+  border-radius: 12px 12px 8px 8px;
+  background:
+    linear-gradient(#f7f7f7 0 18%, transparent 19%),
+    linear-gradient(180deg, #fff 0 35%, #f1f1f1 36%),
+    linear-gradient(90deg, #257c25 0 36%, #ffcf4d 37% 64%, #e9692f 65%);
+}
+
+.product-visual.high-potassium {
+  background:
+    linear-gradient(#f7f7f7 0 18%, transparent 19%),
+    linear-gradient(180deg, #fff 0 35%, #f7ede2 36%),
+    linear-gradient(90deg, #f1841d 0 48%, #f8d56b 49%);
+}
+
+.product-visual.cal-mag {
+  background:
+    linear-gradient(#f7f7f7 0 18%, transparent 19%),
+    linear-gradient(180deg, #fff 0 35%, #f7ece9 36%),
+    linear-gradient(90deg, #b54f44 0 54%, #ececec 55%);
+}
+
+.hydration-card {
+  border: 1px solid #f0c56d;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff8df;
+}
+
+.hydration-card h3 {
+  margin: 0 0 9px;
+  color: #9a5b00;
+}
+
+.hydration-card p,
+.hydration-card li {
+  color: #5f4b12;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.hydration-card ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.plan-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  border: 1px solid #8db7df;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #f2f8ff;
+  color: #22577a;
+  font-size: 0.84rem;
+}
+
+.fertilizer-entry {
+  margin-top: 12px;
+}
+
+.calendar-tools {
+  align-items: end;
+  margin: 16px 0 12px;
+}
+
+.calendar-tools label {
+  min-width: 190px;
+}
+
+.segmented {
+  display: flex;
+  gap: 6px;
+}
+
+.segment {
+  padding: 0 13px;
+}
+
+.data-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 130px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, transparent 42%, rgba(40, 97, 72, 0.26) 43% 56%, transparent 57%),
+    radial-gradient(circle at 35% 35%, var(--moss) 0 28%, transparent 29%),
+    radial-gradient(circle at 66% 45%, var(--green) 0 31%, transparent 32%),
+    #eaf1e6;
+}
+
+@media (max-width: 1180px) {
+  .workspace {
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .topbar,
+  .workspace {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .hero-content {
+    align-items: start;
+    flex-direction: column;
+    justify-content: end;
+  }
+
+  .hero-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .avatar-picker {
+    width: 70px;
+    height: 70px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .plant-list {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+
+  .plant-profile,
+  .form-grid,
+  .profile-meta,
+  .add-view .plant-form {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-item {
+    grid-template-columns: 1fr;
+  }
+
+  .journal-item {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-growth-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-date {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding-right: 0;
+    padding-bottom: 10px;
+  }
+
+  .calendar-tools {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .week-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .plan-support,
+  .fertilizer-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-board-title {
+    grid-template-columns: 1fr;
+  }
+
+  .vine-mark {
+    display: none;
+  }
+
+  .calendar-tools label {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    min-height: 250px;
+  }
+
+  .hero-content {
+    min-height: 250px;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .tabs,
+  .view {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .profile-head,
+  .section-heading,
+  .panel-title {
+    align-items: start;
+  }
+
+  .profile-head,
+  .section-heading {
+    flex-direction: column;
+  }
+
+  .task-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .delete-button {
+    grid-column: 2;
+    width: auto;
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="hero">
+          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201400%20360%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23254534%22%2F%3E%20%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%234f7454%22%2F%3E%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b7c87c%22%2F%3E%20%3C%2FlinearGradient%3E%20%3CradialGradient%20id%3D%22sun%22%20cx%3D%2278%25%22%20cy%3D%2216%25%22%20r%3D%2242%25%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220.72%22%2F%3E%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220%22%2F%3E%20%3C%2FradialGradient%3E%20%3C%2Fdefs%3E%20%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sky)%22%2F%3E%20%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sun)%22%2F%3E%20%3Cpath%20d%3D%22M0%20230%20C170%20190%20270%20245%20430%20212%20C620%20174%20790%20214%20960%20178%20C1150%20139%201280%20156%201400%20112%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23213d2c%22%20opacity%3D%220.82%22%2F%3E%20%3Cpath%20d%3D%22M0%20282%20C170%20246%20280%20296%20440%20270%20C650%20236%20850%20284%201060%20228%20C1210%20188%201332%20200%201400%20170%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23587b47%22%20opacity%3D%220.9%22%2F%3E%20%3Cg%20fill%3D%22%23d6df88%22%20opacity%3D%220.62%22%3E%20%3Ccircle%20cx%3D%221030%22%20cy%3D%22185%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%221060%22%20cy%3D%22150%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221122%22%20cy%3D%22174%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%221188%22%20cy%3D%22142%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221254%22%20cy%3D%22166%22%20r%3D%226%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E" alt="清晨家庭花园" />
+          <div class="hero-shade"></div>
+          <div class="hero-content">
+            <div class="hero-title-row">
+              <label class="avatar-picker" title="设置头像" aria-label="设置头像">
+                <input id="profileAvatarInput" type="file" accept="image/*" />
+                <img id="profileAvatarImage" alt="头像" />
+                <span id="profileAvatarInitial" aria-hidden="true">头像</span>
+              </label>
+              <h1>植物养护计划</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar" aria-label="植物清单">
+          <div class="panel-title list-tools">
+            <button class="icon-button" id="addPlantQuick" type="button" title="添加植物" aria-label="添加植物">
+              <span aria-hidden="true">+</span>
+            </button>
+          </div>
+          <label class="search-box">
+            <span>搜索植物</span>
+            <input id="plantSearch" type="search" placeholder="名称、品种、位置" />
+          </label>
+          <div id="plantList" class="plant-list" role="list"></div>
+        </aside>
+
+        <section class="main-panel" aria-label="植物详情">
+          <div class="tabs" role="tablist" aria-label="视图">
+            <button class="tab active" type="button" data-view="summary">总览</button>
+            <button class="tab" type="button" data-view="care">养护计划</button>
+            <button class="tab" type="button" data-view="timeline">生长过程</button>
+            <button class="tab" type="button" data-view="overview">植物档案</button>
+          </div>
+
+          <div id="browserWarning" class="browser-warning" role="status">
+            <strong>如果这里没有植物列表和计划，请换浏览器打开。</strong>
+            <span>请用 Microsoft Edge 或 Google Chrome；不要用 IE/360 兼容模式。360 浏览器请切换“极速模式”。</span>
+          </div>
+
+          <section id="summaryView" class="view active-view" aria-label="总览">
+            <div class="section-band overview-board">
+              <div class="section-heading">
+                <div>
+                  <p class="label">今天</p>
+                  <h3>今日养护总览</h3>
+                </div>
+                <button class="secondary-button" id="notifyButton" type="button">开启提醒</button>
+              </div>
+              <div id="todayTasks" class="task-list compact overview-task-list"></div>
+            </div>
+          </section>
+
+          <section id="careView" class="view" aria-label="养护计划">
+            <div class="week-heading">
+              <div>
+                <p class="label">本周</p>
+                <h3 id="weekTitle">一周养护表</h3>
+              </div>
+              <label>
+                本周日期
+                <input id="calendarDate" type="date" />
+              </label>
+            </div>
+            <div id="weeklyPlan" class="week-grid" aria-label="周一到周日养护计划"></div>
+            <div id="fertilizerGuide" class="fertilizer-guide"></div>
+
+            <form id="fertilizerForm" class="entry-form fertilizer-entry">
+              <div class="section-heading tight">
+                <div>
+                  <p class="label">肥料库</p>
+                  <h3>添加肥料</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  肥料名称
+                  <input id="fertilizerName" type="text" placeholder="例如 Alaska Fish Fertilizer" required />
+                </label>
+                <label>
+                  NPK / 配方
+                  <input id="fertilizerNpk" type="text" placeholder="例如 5-1-1" />
+                </label>
+                <label>
+                  建议用量
+                  <input id="fertilizerMix" type="text" placeholder="例如 2.5加仑水 + 5汤勺" />
+                </label>
+                <label>
+                  照片
+                  <input id="fertilizerImage" type="file" accept="image/*" />
+                </label>
+              </div>
+              <label>
+                功能
+                <textarea id="fertilizerFunction" rows="2" placeholder="例如 促藤、促根、补钙镁"></textarea>
+              </label>
+              <label>
+                注意事项
+                <textarea id="fertilizerNote" rows="2" placeholder="例如 先清水湿土，避免浓肥烧根"></textarea>
+              </label>
+              <button class="primary-button" type="submit">保存肥料</button>
+            </form>
+
+            <form id="taskForm" class="entry-form care-entry">
+              <div class="section-heading tight">
+                <div>
+                  <p class="label">计划</p>
+                  <h3>制定本周计划</h3>
+                </div>
+              </div>
+              <div class="form-grid">
+                <label>
+                  事项
+                  <select id="taskType">
+                    <option value="浇水">浇水</option>
+                    <option value="施肥">施肥</option>
+                    <option value="修剪">修剪</option>
+                    <option value="观察">观察</option>
+                    <option value="换盆">换盆</option>
+                    <option value="记录">记录</option>
+                  </select>
+                </label>
+                <label>
+                  日期
+                  <input id="taskDate" type="date" required />
+                </label>
+                <label>
+                  重复
+                  <select id="taskRepeat">
+                    <option value="none">不重复</option>
+                    <option value="daily">每天</option>
+                    <option value="3days">每 3 天</option>
+                    <option value="weekly">每周</option>
+                    <option value="monthly">每月</option>
+                  </select>
+                </label>
+                <label>
+                  标题
+                  <input id="taskTitle" type="text" placeholder="例如 番茄少量追肥" />
+                </label>
+              </div>
+              <label>
+                备注
+                <textarea id="taskNote" rows="3" placeholder="用量、肥料品牌、浇水量、注意事项"></textarea>
+              </label>
+              <button class="primary-button" type="submit">加入本周计划</button>
+            </form>
+          </section>
+
+          <section id="timelineView" class="view" aria-label="生长过程">
+            <form id="growthForm" class="entry-form daily-growth-form">
+              <div class="daily-growth-fields">
+                <label class="growth-upload-field">
+                  照片
+                  <input id="growthImage" type="file" accept="image/*" />
+                </label>
+              </div>
+              <label>
+                一句话
+                <textarea id="growthNote" rows="3" placeholder="今天看到的变化"></textarea>
+              </label>
+              <button class="primary-button" type="submit">添加生长记录</button>
+            </form>
+            <div id="growthTimeline" class="timeline"></div>
+          </section>
+
+          <section id="overviewView" class="view" aria-label="植物档案">
+            <div class="plant-profile">
+              <div class="profile-photo-wrap">
+                <img id="selectedPlantPhoto" class="profile-photo" alt="植物照片" />
+                <label class="photo-action">
+                  换照片
+                  <input id="plantPhotoInput" type="file" accept="image/*" />
+                </label>
+              </div>
+              <div class="profile-copy">
+                <div class="profile-head">
+                  <div>
+                    <p class="label" id="selectedPlantType">植物</p>
+                    <h2 id="selectedPlantName">选择一株植物</h2>
+                  </div>
+                  <div class="profile-actions">
+                    <button class="secondary-button" id="editPlantButton" type="button">编辑档案</button>
+                  </div>
+                </div>
+                <dl class="profile-meta">
+                  <div>
+                    <dt>位置</dt>
+                    <dd id="selectedPlantLocation">-</dd>
+                  </div>
+                  <div>
+                    <dt>种下日期</dt>
+                    <dd id="selectedPlantStart">-</dd>
+                  </div>
+                  <div>
+                    <dt>最近记录</dt>
+                    <dd id="selectedPlantRecent">-</dd>
+                  </div>
+                </dl>
+                <p id="selectedPlantNotes" class="notes"></p>
+                <div class="profile-delete-row">
+                  <button class="danger-button" id="deletePlantButton" type="button">删除植物</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-band">
+              <div class="section-heading">
+                <div>
+                  <p class="label">日志</p>
+                  <h3>养护日志</h3>
+                </div>
+              </div>
+              <div id="plantJournal" class="journal-list"></div>
+            </div>
+          </section>
+
+          <section id="addView" class="view add-view" aria-label="添加植物">
+            <div class="add-page">
+              <div class="section-heading">
+                <div>
+                  <p class="label">植物</p>
+                  <h3 id="plantFormTitle">添加植物</h3>
+                </div>
+              </div>
+              <form id="plantForm" class="plant-form">
+                <label>
+                  名称
+                  <input id="plantName" type="text" placeholder="例如 番茄 1 号" required />
+                </label>
+                <label>
+                  品种
+                  <input id="plantType" type="text" placeholder="例如 樱桃番茄" />
+                </label>
+                <label>
+                  位置
+                  <input id="plantLocation" type="text" placeholder="例如 北侧花床" />
+                </label>
+                <label>
+                  种下日期
+                  <input id="plantStartDate" type="date" />
+                </label>
+                <label>
+                  照片
+                  <input id="plantImage" type="file" accept="image/*" />
+                </label>
+                <label>
+                  备注
+                  <textarea id="plantNotes" rows="4" placeholder="阳光、土壤、购买来源、目标"></textarea>
+                </label>
+                <button class="primary-button full" type="submit">保存植物</button>
+              </form>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <template id="emptyTemplate">
+      <div class="empty-state">
+        <div class="empty-mark" aria-hidden="true"></div>
+        <p></p>
+      </div>
+    </template>
+
+    <script>
+const STORAGE_KEY = "alex-garden-tracker-lite-v2";
+const SAMPLE_VERSION = 9;
+const WEEK_DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
+const fallbackPhoto =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='700' viewBox='0 0 900 700'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23286148'/%3E%3Cstop offset='.55' stop-color='%237b8f45'/%3E%3Cstop offset='1' stop-color='%23f2bd5e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='700' fill='%23e8efe5'/%3E%3Ccircle cx='240' cy='270' r='95' fill='%23286148' opacity='.86'/%3E%3Ccircle cx='430' cy='245' r='130' fill='%237b8f45' opacity='.8'/%3E%3Ccircle cx='610' cy='320' r='110' fill='%234f7b92' opacity='.62'/%3E%3Cpath d='M180 590 C260 435 375 350 505 275 C570 238 640 190 735 105' stroke='url(%23g)' stroke-width='34' fill='none' stroke-linecap='round'/%3E%3Cpath d='M286 460 C235 390 197 340 126 305 C192 295 252 322 312 394' fill='%23286148' opacity='.9'/%3E%3Cpath d='M470 325 C430 245 448 176 530 108 C552 196 548 275 470 325' fill='%237b8f45' opacity='.9'/%3E%3Cpath d='M578 245 C640 175 712 145 814 164 C735 239 662 269 578 245' fill='%23c86b47' opacity='.78'/%3E%3C/svg%3E";
+
+const state = loadState();
+let selectedPlantId = state.selectedPlantId || state.plants[0]?.id || null;
+let currentView = "summary";
+let reminderTimer = null;
+
+const els = {
+  profileAvatarInput: document.querySelector("#profileAvatarInput"),
+  profileAvatarImage: document.querySelector("#profileAvatarImage"),
+  profileAvatarInitial: document.querySelector("#profileAvatarInitial"),
+  plantList: document.querySelector("#plantList"),
+  plantSearch: document.querySelector("#plantSearch"),
+  addPlantQuick: document.querySelector("#addPlantQuick"),
+  plantFormTitle: document.querySelector("#plantFormTitle"),
+  plantForm: document.querySelector("#plantForm"),
+  plantName: document.querySelector("#plantName"),
+  plantType: document.querySelector("#plantType"),
+  plantLocation: document.querySelector("#plantLocation"),
+  plantStartDate: document.querySelector("#plantStartDate"),
+  plantImage: document.querySelector("#plantImage"),
+  plantNotes: document.querySelector("#plantNotes"),
+  selectedPlantPhoto: document.querySelector("#selectedPlantPhoto"),
+  plantPhotoInput: document.querySelector("#plantPhotoInput"),
+  selectedPlantType: document.querySelector("#selectedPlantType"),
+  selectedPlantName: document.querySelector("#selectedPlantName"),
+  selectedPlantLocation: document.querySelector("#selectedPlantLocation"),
+  selectedPlantStart: document.querySelector("#selectedPlantStart"),
+  selectedPlantRecent: document.querySelector("#selectedPlantRecent"),
+  selectedPlantNotes: document.querySelector("#selectedPlantNotes"),
+  editPlantButton: document.querySelector("#editPlantButton"),
+  deletePlantButton: document.querySelector("#deletePlantButton"),
+  todayTasks: document.querySelector("#todayTasks"),
+  notifyButton: document.querySelector("#notifyButton"),
+  plantJournal: document.querySelector("#plantJournal"),
+  tabs: document.querySelectorAll(".tab"),
+  views: {
+    summary: document.querySelector("#summaryView"),
+    overview: document.querySelector("#overviewView"),
+    timeline: document.querySelector("#timelineView"),
+    care: document.querySelector("#careView"),
+    add: document.querySelector("#addView"),
+  },
+  growthForm: document.querySelector("#growthForm"),
+  growthImage: document.querySelector("#growthImage"),
+  growthNote: document.querySelector("#growthNote"),
+  growthTimeline: document.querySelector("#growthTimeline"),
+  taskForm: document.querySelector("#taskForm"),
+  taskType: document.querySelector("#taskType"),
+  taskDate: document.querySelector("#taskDate"),
+  taskRepeat: document.querySelector("#taskRepeat"),
+  taskTitle: document.querySelector("#taskTitle"),
+  taskNote: document.querySelector("#taskNote"),
+  calendarDate: document.querySelector("#calendarDate"),
+  weekTitle: document.querySelector("#weekTitle"),
+  weeklyPlan: document.querySelector("#weeklyPlan"),
+  fertilizerGuide: document.querySelector("#fertilizerGuide"),
+  fertilizerForm: document.querySelector("#fertilizerForm"),
+  fertilizerName: document.querySelector("#fertilizerName"),
+  fertilizerNpk: document.querySelector("#fertilizerNpk"),
+  fertilizerMix: document.querySelector("#fertilizerMix"),
+  fertilizerFunction: document.querySelector("#fertilizerFunction"),
+  fertilizerNote: document.querySelector("#fertilizerNote"),
+  fertilizerImage: document.querySelector("#fertilizerImage"),
+  exportButton: document.querySelector("#exportButton"),
+  importInput: document.querySelector("#importInput"),
+  emptyTemplate: document.querySelector("#emptyTemplate"),
+};
+
+init();
+
+function init() {
+  document.documentElement.classList.add("js-ready");
+  state.profile = state.profile || {};
+  els.taskDate.value = todayIso();
+  els.calendarDate.value = todayIso();
+  bindEvents();
+  render();
+}
+
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed.plants) && Array.isArray(parsed.tasks)) {
+        parsed.profile = parsed.profile || {};
+        parsed.plants.forEach((plant) => {
+          plant.entries = Array.isArray(plant.entries) ? plant.entries : [];
+        });
+        return ensureSampleData(parsed);
+      }
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  const seeded = seedState();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+  return seeded;
+}
+
+function seedState() {
+  const now = todayIso();
+  const weekStart = startOfWeekIso(now);
+  const plants = createInitialPlants(now);
+  const pumpkin = plants.find((plant) => plant.name === "巨型南瓜");
+
+  return {
+    sampleVersion: SAMPLE_VERSION,
+    profile: {
+      avatar: "",
+    },
+    selectedPlantId: pumpkin?.id || plants[0]?.id || null,
+    plants,
+    tasks: pumpkin ? createPumpkinWeekTasks(pumpkin.id, weekStart) : [],
+  };
+}
+
+function ensureSampleData(data) {
+  data.sampleVersion = Number(data.sampleVersion || 1);
+  const now = todayIso();
+  if (data.sampleVersion >= SAMPLE_VERSION) return data;
+
+  const pumpkin = syncPlantRoster(data, now);
+  pumpkin.fertilizers = mergeFertilizers(pumpkin.fertilizers, pumpkinFertilizers());
+  data.tasks = data.tasks.filter((task) => !(task.plantId === pumpkin.id && task.samplePlan === "giant-pumpkin-week"));
+  data.tasks.push(...createPumpkinWeekTasks(pumpkin.id, startOfWeekIso(now)));
+
+  data.selectedPlantId = pumpkin.id;
+  data.sampleVersion = SAMPLE_VERSION;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  return data;
+}
+
+function plantRosterTemplates() {
+  const normalPumpkins = ["盆栽1号", "盆栽2号", "地栽1号", "地栽2号", "地栽3号"].map((label) => ({
+    name: `普通南瓜${label}`,
+    type: "普通南瓜",
+    location: label,
+    notes: "普通南瓜档案，后续补充照片、生长记录和养护计划。",
+  }));
+  const cucumbers = [1, 2].map((number) => ({
+    name: `黄瓜${number}号`,
+    type: "黄瓜",
+    location: "待填写",
+    notes: "黄瓜档案，记录每天长势、开花和结果情况。",
+  }));
+  const tomatoes = ["番茄", "番茄1号", "番茄2号"].map((name) => ({
+    name,
+    type: "番茄",
+    location: "待填写",
+    notes: "番茄档案，记录浇水、追肥、开花和结果情况。",
+  }));
+  const hydrangeas = ["绣球一号", "绣球二号", "房东绣球1号", "房东绣球2号"].map((name) => ({
+    name,
+    type: name.startsWith("房东") ? "房东绣球" : "绣球",
+    location: "待填写",
+    notes: "绣球档案，记录花色、修剪、浇水和遮阴情况。",
+  }));
+  const roses = Array.from({ length: 15 }, (_, index) => ({
+    name: `玫瑰花${index + 1}号`,
+    type: "玫瑰花",
+    location: "待填写",
+    notes: "玫瑰花档案，记录开花、修剪、病虫害和施肥情况。",
+  }));
+
+  return [
+    {
+      name: "巨型南瓜",
+      type: "瓜果类",
+      location: "西侧大花床",
+      notes: "目标是养大果实，保持稳定深浇水。结果期以高钾肥为主，鱼肥用于补充氮、氨基酸和微量元素。",
+    },
+    ...normalPumpkins,
+    ...cucumbers,
+    ...tomatoes,
+    {
+      name: "柠檬树",
+      type: "果树",
+      location: "待填写",
+      notes: "柠檬树档案，记录新梢、开花、坐果、浇水和补肥情况。",
+    },
+    ...hydrangeas,
+    ...roses,
+  ];
+}
+
+function createInitialPlants(now) {
+  return plantRosterTemplates().map((template) =>
+    template.name === "巨型南瓜" ? createPumpkinPlant(crypto.randomUUID(), now) : createRosterPlant(template),
+  );
+}
+
+function createRosterPlant(template) {
+  return {
+    id: crypto.randomUUID(),
+    name: template.name,
+    type: template.type || "",
+    location: template.location || "",
+    startDate: "",
+    photo: "",
+    notes: template.notes || "",
+    fertilizers: [],
+    entries: [],
+  };
+}
+
+function syncPlantRoster(data, now) {
+  const removedIds = new Set();
+  const desired = plantRosterTemplates();
+  const desiredNames = new Set(desired.map((template) => normalizePlantName(template.name)));
+  const existingByName = new Map();
+
+  data.plants.forEach((plant) => {
+    const key = normalizePlantName(plant.name);
+    if (!existingByName.has(key)) existingByName.set(key, plant);
+    plantRosterAliases(plant.name).forEach((alias) => {
+      const aliasKey = normalizePlantName(alias);
+      if (!existingByName.has(aliasKey)) existingByName.set(aliasKey, plant);
+    });
+  });
+
+  const syncedPlants = desired.map((template) => {
+    let plant = existingByName.get(normalizePlantName(template.name));
+    if (!plant && template.name === "巨型南瓜") plant = createPumpkinPlant(crypto.randomUUID(), now);
+    if (!plant) plant = createRosterPlant(template);
+    applyPlantTemplateDefaults(plant, template);
+    return plant;
+  });
+
+  data.plants.forEach((plant) => {
+    const key = normalizePlantName(plant.name);
+    if (desiredNames.has(key)) return;
+    if (isRetiredSeedPlant(plant)) {
+      removedIds.add(plant.id);
+      return;
+    }
+    syncedPlants.push(plant);
+  });
+
+  data.plants = syncedPlants;
+  data.tasks = data.tasks.filter((task) => !removedIds.has(task.plantId));
+  return data.plants.find((plant) => plant.name === "巨型南瓜") || data.plants[0];
+}
+
+function applyPlantTemplateDefaults(plant, template) {
+  plant.name = template.name;
+  plant.type = plant.type || template.type || "";
+  plant.location = plant.location || template.location || "";
+  plant.notes = plant.notes || template.notes || "";
+  plant.entries = Array.isArray(plant.entries) ? plant.entries : [];
+  plant.fertilizers = Array.isArray(plant.fertilizers) ? plant.fertilizers : [];
+}
+
+function normalizePlantName(name) {
+  return String(name || "").replace(/\s+/g, "").trim();
+}
+
+function plantRosterAliases(name) {
+  const aliases = {
+    绣球1号: ["绣球一号"],
+    绣球2号: ["绣球二号"],
+    黄东绣球一号: ["房东绣球1号"],
+    黄东绣球二号: ["房东绣球2号"],
+  };
+  return aliases[normalizePlantName(name)] || [];
+}
+
+function isRetiredSeedPlant(plant) {
+  if (plant.photo || plant.entries?.length) return false;
+  return ["薄荷2号", "月季3号", "绣球3号"].includes(normalizePlantName(plant.name));
+}
+
+function createPumpkinPlant(id, now) {
+  return {
+    id,
+    name: "巨型南瓜",
+    type: "瓜果类",
+    location: "西侧大花床",
+    startDate: addDays(now, -35),
+    photo: "",
+    notes: "目标是养大果实，保持稳定深浇水。结果期以高钾肥为主，鱼肥用于补充氮、氨基酸和微量元素。",
+    fertilizers: pumpkinFertilizers(),
+    entries: [
+      {
+        id: crypto.randomUUID(),
+        date: addDays(now, -5),
+        stage: "结果",
+        height: "主藤约 2.4 m",
+        note: "已保留一个主果，准备进入膨果期，开始记录每周肥水。",
+        image: "",
+      },
+    ],
+  };
+}
+
+function pumpkinFertilizers() {
+  return [
+    {
+      id: "pumpkin-fish-fertilizer",
+      chineseName: "鱼肥",
+      name: "Alaska Fish Fertilizer",
+      kind: "fish",
+      npk: "5-1-1",
+      mix: "2.5加仑水 + 5汤勺（约25ml）",
+      functionText: "有机鱼肥，偏氮，帮助巨型南瓜长藤、长叶、促根和恢复长势。",
+      note: "气味较重，浇根区即可，避免喷叶和接触瓜面。",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%20%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23955125%22%2F%3E%20%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23955125%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1c24d%22%3E%20%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%20%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E5-1-1%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+    },
+    {
+      id: "pumpkin-morbloom",
+      chineseName: "高钾肥",
+      name: "Alaska Morbloom",
+      kind: "high-potassium",
+      npk: "0-10-10",
+      mix: "2.5加仑水 + 2汤勺（约10ml）",
+      functionText: "高磷高钾，适合开花、坐果和膨果期，帮助果实膨大并增强抗逆。",
+      note: "先清水湿土，再滴灌肥水；避免浓肥直接烧根。",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%20%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%2379429e%22%2F%3E%20%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%2379429e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f0a5c8%22%3E%20%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%20%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E0-10-10%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+    },
+    {
+      id: "pumpkin-cal-mag",
+      chineseName: "钙镁肥",
+      name: "Bloom City Cal-Mag",
+      kind: "cal-mag",
+      npk: "2-0-0 Supplement",
+      mix: "2.5加仑水 + 2汤勺（约10ml）",
+      functionText: "补钙、镁、铁，帮助预防缺钙、裂瓜、黄叶和缺素。",
+      note: "通常和鱼肥同日少量合用；不要过量。",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%20%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23ac342e%22%2F%3E%20%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23ac342e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1d05e%22%3E%20%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%20%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%20%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E2-0-0%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+    },
+  ];
+}
+
+function mergeFertilizers(existing, defaults) {
+  const current = Array.isArray(existing) ? existing : [];
+  const used = new Set();
+  const merged = defaults.map((item) => {
+    const found = current.find((fertilizer, index) => {
+      const matches = fertilizer.id === item.id || fertilizer.name === item.name;
+      if (matches) used.add(index);
+      return matches;
+    });
+    return found ? { ...item, ...found, image: found.image || item.image, kind: found.kind || item.kind } : { ...item };
+  });
+
+  current.forEach((item, index) => {
+    if (!used.has(index)) merged.push(item);
+  });
+  return merged;
+}
+
+function createPumpkinWeekTasks(plantId, weekStart) {
+  const plans = [
+    {
+      day: 0,
+      type: "施肥",
+      title: "鱼肥促根促藤",
+      note: "沿根区外圈浇施，避开叶片和瓜面。",
+      fertilizerName: "鱼肥",
+      mix: "2.5加仑水 + 5汤勺 Alaska Fish Fertilizer",
+      dosage: "5汤勺（约25ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补充氮、氨基酸和微量元素，帮助长藤、恢复长势。",
+    },
+    {
+      day: 1,
+      type: "浇水",
+      title: "清水补水",
+      note: "补水，冲盐分，防止肥害。",
+    },
+    {
+      day: 2,
+      type: "施肥",
+      title: "高钾肥促进膨果",
+      note: "先浇清水湿土，再浇肥水，避免浓肥烧根。",
+      fertilizerName: "高钾肥",
+      mix: "2.5加仑水 + 2汤勺 Alaska Morbloom",
+      dosage: "2汤勺（约10ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "提高钾供应，帮助坐果、膨果和增强抗逆。",
+    },
+    {
+      day: 3,
+      type: "浇水",
+      title: "清水补水",
+      note: "补水，维持土壤湿度。",
+    },
+    {
+      day: 4,
+      type: "浇水",
+      title: "清水补水",
+      note: "补水，维持土壤湿度。",
+    },
+    {
+      day: 5,
+      type: "施肥",
+      title: "鱼肥加钙镁肥",
+      note: "沿根区外圈浇施，避开叶片和瓜面。",
+      fertilizerName: "鱼肥 + 钙镁肥",
+      mix: "2.5加仑水 + 5汤勺 Alaska Fish Fertilizer + 2汤勺 Bloom City Cal-Mag",
+      dosage: "鱼肥5汤勺（约25ml）+ 钙镁肥2汤勺（约10ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补氮、补钙、补镁，预防缺钙、裂瓜，促进健康生长。",
+    },
+    {
+      day: 6,
+      type: "浇水",
+      title: "清水补水",
+      note: "补水，恢复缓冲。",
+    },
+  ];
+
+  return plans.map((plan) => ({
+    id: crypto.randomUUID(),
+    plantId,
+    type: plan.type,
+    title: plan.title,
+    dueDate: addDays(weekStart, plan.day),
+    repeat: "none",
+    note: plan.note,
+    fertilizerName: plan.fertilizerName || "",
+    mix: plan.mix || "",
+    dosage: plan.dosage || (plan.type === "浇水" ? "清水，不加肥" : ""),
+    wateringTime: plan.wateringTime || "06:30 - 07:30",
+    functionText: plan.functionText || "",
+    done: false,
+    completedAt: "",
+    samplePlan: "giant-pumpkin-week",
+  }));
+}
+
+function bindEvents() {
+  els.plantSearch.addEventListener("input", renderPlantList);
+  els.addPlantQuick.addEventListener("click", () => {
+    beginAddPlant();
+  });
+
+  els.plantForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await savePlantFromForm();
+  });
+
+  els.editPlantButton.addEventListener("click", () => {
+    const plant = getSelectedPlant();
+    if (!plant) return;
+    beginEditPlant(plant);
+  });
+
+  els.deletePlantButton.addEventListener("click", () => {
+    const plant = getSelectedPlant();
+    if (plant) deletePlant(plant.id);
+  });
+
+  els.plantPhotoInput.addEventListener("change", async () => {
+    const plant = getSelectedPlant();
+    const file = els.plantPhotoInput.files?.[0];
+    if (!plant || !file) return;
+    plant.photo = await imageToDataUrl(file);
+    els.plantPhotoInput.value = "";
+    persistAndRender();
+  });
+
+  els.profileAvatarInput.addEventListener("change", async () => {
+    const file = els.profileAvatarInput.files?.[0];
+    if (!file) return;
+    state.profile = state.profile || {};
+    state.profile.avatar = await imageToDataUrl(file);
+    els.profileAvatarInput.value = "";
+    persistAndRender();
+  });
+
+  els.tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      if (tab.dataset.view === "add") {
+        beginAddPlant();
+        return;
+      }
+      switchView(tab.dataset.view);
+    });
+  });
+
+  els.growthForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await addGrowthEntry();
+  });
+
+  els.taskForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    addTask();
+  });
+
+  els.fertilizerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await addFertilizer();
+  });
+
+  els.calendarDate.addEventListener("change", renderWeeklyPlan);
+
+  els.notifyButton.addEventListener("click", enableNotifications);
+  els.exportButton?.addEventListener("click", exportData);
+  els.importInput?.addEventListener("change", importData);
+}
+
+async function savePlantFromForm() {
+  const name = els.plantName.value.trim();
+  if (!name) return;
+
+  const editingId = els.plantName.dataset.editing;
+  const existing = editingId ? state.plants.find((plant) => plant.id === editingId) : null;
+  const photoFile = els.plantImage.files?.[0];
+  const photo = photoFile ? await imageToDataUrl(photoFile) : existing?.photo || "";
+
+  if (existing) {
+    Object.assign(existing, {
+      name,
+      type: els.plantType.value.trim(),
+      location: els.plantLocation.value.trim(),
+      startDate: els.plantStartDate.value,
+      notes: els.plantNotes.value.trim(),
+      photo,
+    });
+    delete els.plantName.dataset.editing;
+  } else {
+    const plant = {
+      id: crypto.randomUUID(),
+      name,
+      type: els.plantType.value.trim(),
+      location: els.plantLocation.value.trim(),
+      startDate: els.plantStartDate.value,
+      notes: els.plantNotes.value.trim(),
+      photo,
+      fertilizers: [],
+      entries: [],
+    };
+    state.plants.unshift(plant);
+    selectedPlantId = plant.id;
+  }
+
+  els.plantForm.reset();
+  els.plantFormTitle.textContent = "添加植物";
+  persistAndRender();
+  switchView("overview");
+}
+
+function beginAddPlant() {
+  delete els.plantName.dataset.editing;
+  els.plantForm.reset();
+  els.plantFormTitle.textContent = "添加植物";
+  switchView("add");
+  requestAnimationFrame(() => els.plantName.focus());
+}
+
+function beginEditPlant(plant) {
+  els.plantName.value = plant.name;
+  els.plantType.value = plant.type || "";
+  els.plantLocation.value = plant.location || "";
+  els.plantStartDate.value = plant.startDate || "";
+  els.plantNotes.value = plant.notes || "";
+  els.plantName.dataset.editing = plant.id;
+  els.plantFormTitle.textContent = "编辑植物";
+  switchView("add");
+  requestAnimationFrame(() => els.plantName.focus());
+}
+
+async function addGrowthEntry() {
+  const plant = getSelectedPlant();
+  if (!plant) return;
+
+  const file = els.growthImage.files?.[0];
+  plant.entries.unshift({
+    id: crypto.randomUUID(),
+    date: todayIso(),
+    note: els.growthNote.value.trim(),
+    image: file ? await imageToDataUrl(file) : "",
+  });
+
+  els.growthForm.reset();
+  persistAndRender();
+}
+
+function addTask() {
+  const plant = getSelectedPlant();
+  if (!plant) return;
+
+  const type = els.taskType.value;
+  const title = els.taskTitle.value.trim() || `${plant.name} ${type}`;
+  const task = {
+    id: crypto.randomUUID(),
+    plantId: plant.id,
+    type,
+    title,
+    dueDate: els.taskDate.value || todayIso(),
+    repeat: els.taskRepeat.value,
+    note: els.taskNote.value.trim(),
+    done: false,
+    completedAt: "",
+  };
+  Object.assign(task, inferCareDetails(task, plant));
+  state.tasks.push(task);
+
+  els.taskForm.reset();
+  els.taskDate.value = todayIso();
+  persistAndRender();
+}
+
+async function addFertilizer() {
+  const plant = getSelectedPlant();
+  const name = els.fertilizerName.value.trim();
+  if (!plant || !name) return;
+
+  const file = els.fertilizerImage.files?.[0];
+  plant.fertilizers = Array.isArray(plant.fertilizers) ? plant.fertilizers : [];
+  plant.fertilizers.push({
+    id: crypto.randomUUID(),
+    name,
+    kind: "custom",
+    npk: els.fertilizerNpk.value.trim(),
+    mix: els.fertilizerMix.value.trim(),
+    functionText: els.fertilizerFunction.value.trim(),
+    note: els.fertilizerNote.value.trim(),
+    image: file ? await imageToDataUrl(file) : "",
+  });
+
+  els.fertilizerForm.reset();
+  persistAndRender();
+}
+
+function persistAndRender() {
+  state.selectedPlantId = selectedPlantId;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  render();
+}
+
+function render() {
+  document.body.dataset.view = currentView;
+  if ((!selectedPlantId || !state.plants.some((plant) => plant.id === selectedPlantId)) && state.plants.length) {
+    selectedPlantId = state.plants[0].id;
+  }
+  renderProfileAvatar();
+  renderPlantList();
+  renderProfile();
+  renderTodayTasks();
+  renderPlantJournal();
+  renderTimeline();
+  renderWeeklyPlan();
+  renderFertilizerGuide();
+}
+
+function renderProfileAvatar() {
+  const avatar = state.profile?.avatar || "";
+  const picker = els.profileAvatarInput.closest(".avatar-picker");
+  if (avatar) {
+    els.profileAvatarImage.src = safeImageSrc(avatar);
+    picker.classList.add("has-image");
+  } else {
+    els.profileAvatarImage.removeAttribute("src");
+    picker.classList.remove("has-image");
+  }
+}
+
+function renderPlantList() {
+  const query = els.plantSearch.value.trim().toLowerCase();
+  const plants = state.plants.filter((plant) => {
+    const haystack = [plant.name, plant.type, plant.location].join(" ").toLowerCase();
+    return haystack.includes(query);
+  });
+
+  els.plantList.innerHTML = "";
+  if (!plants.length) {
+    els.plantList.append(emptyState("还没有匹配的植物。"));
+    return;
+  }
+
+  plants.forEach((plant) => {
+    const card = document.createElement("article");
+    card.className = `plant-card ${plant.id === selectedPlantId ? "active" : ""}`;
+    card.setAttribute("role", "listitem");
+    card.innerHTML = `
+      <button class="plant-select" type="button" aria-label="选择 ${escapeHtml(plant.name)}">
+        ${plant.photo ? `<img src="${escapeHtml(safeImageSrc(plant.photo))}" alt="${escapeHtml(plant.name)}">` : `<div class="plant-placeholder" aria-hidden="true"></div>`}
+        <span class="plant-summary">
+        <strong>${escapeHtml(plant.name)}</strong>
+        <span>${escapeHtml([plant.type, plant.location].filter(Boolean).join(" · ") || "未填写位置")}</span>
+        </span>
+      </button>
+    `;
+    card.querySelector(".plant-select").addEventListener("click", () => {
+      selectedPlantId = plant.id;
+      persistAndRender();
+    });
+    els.plantList.append(card);
+  });
+}
+
+function renderProfile() {
+  const plant = getSelectedPlant();
+  const disabled = !plant;
+
+  els.editPlantButton.disabled = disabled;
+  els.deletePlantButton.disabled = disabled;
+  els.plantPhotoInput.disabled = disabled;
+  if (!plant) {
+    els.selectedPlantPhoto.src = fallbackPhoto;
+    els.selectedPlantType.textContent = "植物";
+    els.selectedPlantName.textContent = "添加第一株植物";
+    els.selectedPlantLocation.textContent = "-";
+    els.selectedPlantStart.textContent = "-";
+    els.selectedPlantRecent.textContent = "-";
+    els.selectedPlantNotes.textContent = "";
+    return;
+  }
+
+  const latest = [...plant.entries].sort((a, b) => b.date.localeCompare(a.date))[0];
+  els.selectedPlantPhoto.src = safeImageSrc(plant.photo);
+  els.selectedPlantType.textContent = plant.type || "植物";
+  els.selectedPlantName.textContent = plant.name;
+  els.selectedPlantLocation.textContent = plant.location || "未填写";
+  els.selectedPlantStart.textContent = plant.startDate ? formatDate(plant.startDate) : "未填写";
+  els.selectedPlantRecent.textContent = latest ? `${formatDate(latest.date)} · ${growthSentence(latest)}` : "还没有记录";
+  els.selectedPlantNotes.textContent = plant.notes || "未填写备注。";
+}
+
+function renderTodayTasks() {
+  renderTaskCollection(els.todayTasks, todayCareTasks(), {
+    emptyText: "今天没有未完成的浇水或施肥。",
+    hideDelete: true,
+  });
+}
+
+function renderPlantJournal() {
+  const plant = getSelectedPlant();
+  els.plantJournal.innerHTML = "";
+  if (!plant) {
+    els.plantJournal.append(emptyState("先添加一株植物。"));
+    return;
+  }
+
+  const logs = plantJournalItems(plant);
+  if (!logs.length) {
+    els.plantJournal.append(emptyState("还没有日志。完成养护或添加生长记录后会出现在这里。"));
+    return;
+  }
+
+  logs.forEach((log) => {
+    const item = document.createElement("article");
+    item.className = `journal-item ${log.kind}`;
+    item.innerHTML = `
+      <div class="journal-date">${escapeHtml(formatDate(log.date))}</div>
+      <div class="journal-copy">
+        <div class="journal-title">
+          <span class="badge ${log.badgeClass}">${escapeHtml(log.type)}</span>
+          <strong>${escapeHtml(log.title)}</strong>
+        </div>
+        ${log.text ? `<p>${escapeHtml(log.text)}</p>` : ""}
+        ${log.extra ? `<p class="journal-extra">${escapeHtml(log.extra)}</p>` : ""}
+      </div>
+    `;
+    els.plantJournal.append(item);
+  });
+}
+
+function deletePlant(plantId) {
+  const plant = state.plants.find((item) => item.id === plantId);
+  if (!plant) return;
+
+  const confirmed = window.confirm(`删除「${plant.name}」吗？这会一起删除它的生长记录和养护计划。`);
+  if (!confirmed) return;
+
+  state.plants = state.plants.filter((item) => item.id !== plantId);
+  state.tasks = state.tasks.filter((task) => task.plantId !== plantId);
+  if (selectedPlantId === plantId) {
+    selectedPlantId = state.plants[0]?.id || null;
+  }
+  if (els.plantName.dataset.editing === plantId) {
+    delete els.plantName.dataset.editing;
+    els.plantForm.reset();
+    els.plantFormTitle.textContent = "添加植物";
+  }
+  persistAndRender();
+}
+
+function renderTimeline() {
+  const plant = getSelectedPlant();
+  els.growthTimeline.innerHTML = "";
+
+  if (!plant) {
+    els.growthTimeline.append(emptyState("先添加一株植物。"));
+    return;
+  }
+
+  const entries = [...plant.entries].sort((a, b) => b.date.localeCompare(a.date));
+  if (!entries.length) {
+    els.growthTimeline.append(emptyState("还没有生长记录。"));
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const article = document.createElement("article");
+    article.className = "timeline-item";
+    const date = entry.date || todayIso();
+    const sentence = growthSentence(entry);
+    article.innerHTML = `
+      <div class="timeline-date">
+        <strong>${formatDate(date)}</strong>
+        <span>生长日记</span>
+      </div>
+      <div class="timeline-image-wrap">
+        ${entry.image ? `<img class="timeline-image" src="${escapeHtml(safeImageSrc(entry.image))}" alt="生长记录照片">` : `<div class="timeline-image-placeholder" aria-hidden="true"></div>`}
+      </div>
+      <div class="timeline-body">
+        <p>${escapeHtml(sentence)}</p>
+      </div>
+    `;
+    els.growthTimeline.append(article);
+  });
+}
+
+function growthSentence(entry) {
+  return entry.note || entry.stage || "这一天还没有填写记录。";
+}
+
+function renderWeeklyPlan() {
+  const plant = getSelectedPlant();
+  els.weeklyPlan.innerHTML = "";
+
+  if (!plant) {
+    els.weeklyPlan.append(emptyState("先添加一株植物。"));
+    els.weekTitle.textContent = "一周养护表";
+    return;
+  }
+
+  const weekStart = startOfWeekIso(els.calendarDate.value || todayIso());
+  const days = getWeekDates(weekStart);
+  els.weekTitle.textContent = `${formatShortDate(days[0])} - ${formatShortDate(days[6])}`;
+
+  const tasks = state.tasks
+    .filter((task) => task.plantId === plant.id && task.dueDate >= days[0] && task.dueDate <= days[6])
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.title.localeCompare(b.title));
+
+  const board = document.createElement("section");
+  board.className = "plan-board";
+  board.innerHTML = `
+    <div class="plan-board-title">
+      <span class="vine-mark" aria-hidden="true"></span>
+      <h3>${escapeHtml(plant.name)}施肥滴灌计划表</h3>
+      <span class="vine-mark right" aria-hidden="true"></span>
+    </div>
+    <div class="plan-scroll">
+      <table class="care-table">
+        <thead>
+          <tr>
+            <th class="row-label blank"></th>
+            ${days
+              .map(
+                (date, index) => `
+                  <th class="${date === todayIso() ? "today" : ""}">
+                    <span>${WEEK_DAYS[index]}</span>
+                    <small>${formatShortDate(date)}</small>
+                  </th>
+                `,
+              )
+              .join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${renderPlanRow("内容", "content", days, tasks, plant)}
+          ${renderPlanRow("滴灌时间", "time", days, tasks, plant)}
+          ${renderPlanRow("作用", "effect", days, tasks, plant)}
+          ${renderPlanRow("完成", "done", days, tasks, plant)}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  board.querySelectorAll(".plan-checkbox").forEach((checkbox) => {
+    checkbox.addEventListener("change", (event) => {
+      togglePlanTasks(event.target.dataset.taskIds || event.target.dataset.taskId, event.target.checked);
+    });
+  });
+  els.weeklyPlan.append(board);
+}
+
+function renderPlanRow(label, field, days, tasks, plant) {
+  return `
+    <tr>
+      <th class="row-label">${escapeHtml(label)}</th>
+      ${days
+        .map((date) => {
+          const dayTasks = tasks.filter((task) => task.dueDate === date);
+          return `<td>${renderPlanCell(dayTasks, field, plant)}</td>`;
+        })
+        .join("")}
+    </tr>
+  `;
+}
+
+function renderPlanCell(tasks, field, plant) {
+  if (!tasks.length) return `<span class="muted-cell">无安排</span>`;
+  const groups = groupPlanTasks(tasks, plant);
+  if (field === "content") {
+    return groups.map((group) => renderPlanContent(group.task, plant)).join("");
+  }
+  if (field === "time") {
+    const times = [...new Set(tasks.map((task) => task.wateringTime || "06:30 - 07:30"))];
+    return times.map((time) => `<p class="time-cell">${escapeHtml(time)}</p>`).join("");
+  }
+  if (field === "done") {
+    return groups.map((group) => renderPlanDone(group.task, group.tasks)).join("");
+  }
+  return groups.map((group) => `<p>${escapeHtml(planEffectText(group.task, plant))}</p>`).join("");
+}
+
+function groupPlanTasks(tasks, plant) {
+  const groups = new Map();
+  tasks.forEach((task) => {
+    const key = [
+      task.type,
+      planContentKey(task, plant),
+      task.wateringTime || "06:30 - 07:30",
+      planEffectText(task, plant),
+    ].join("|");
+    if (!groups.has(key)) groups.set(key, { task, tasks: [] });
+    groups.get(key).tasks.push(task);
+  });
+  return [...groups.values()];
+}
+
+function renderPlanContent(task, plant) {
+  const visualClass = task.type === "施肥" ? "fertilizer-visual" : task.type === "浇水" ? "water-visual" : "leaf-visual";
+  return `
+    <div class="plan-task-line ${task.done ? "done" : ""}">
+      <span class="${visualClass}" aria-hidden="true"></span>
+      <div>
+        <strong>${escapeHtml(planActionText(task))}</strong>
+        ${planContentHtml(task, plant)}
+      </div>
+    </div>
+  `;
+}
+
+function renderPlanDone(task, groupedTasks = [task]) {
+  const allDone = groupedTasks.every((item) => item.done);
+  const taskIds = groupedTasks.map((item) => item.id).join(",");
+  return `
+    <label class="plan-check-line ${allDone ? "done" : ""}">
+      <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
+      <span>${allDone ? "已完成" : "未完成"}</span>
+    </label>
+  `;
+}
+
+function planActionText(task) {
+  if (task.type === "施肥") return "施肥";
+  if (task.type === "浇水") return "浇水";
+  return task.type || "计划";
+}
+
+function planContentKey(task, plant) {
+  if (task.type !== "施肥") return planContentText(task, plant);
+  return fertilizerKeysForTask(task, plant).join("+") || task.title;
+}
+
+function planContentHtml(task, plant) {
+  if (task.type !== "施肥") return `<span>${escapeHtml(planContentText(task, plant))}</span>`;
+  const keys = fertilizerKeysForTask(task, plant);
+  if (!keys.length) return `<span>${escapeHtml(task.title)}</span>`;
+  return `<span class="fertilizer-chip-row">${keys.map((key) => fertilizerChipHtml(key)).join("")}</span>`;
+}
+
+function planContentText(task, plant) {
+  if (task.type === "浇水") return "清水，不加肥";
+  if (task.type !== "施肥") return task.title;
+  const keys = fertilizerKeysForTask(task, plant);
+  return keys.length ? keys.map((key) => fertilizerShortLabel(key)).join(" + ") : task.title;
+}
+
+function fertilizerKeysForTask(task, plant) {
+  const details = task.fertilizerName ? task : inferCareDetails(task, plant);
+  if (details.fertilizerName.includes("鱼肥 + 钙镁肥")) {
+    return ["fish", "cal-mag"];
+  }
+  if (details.fertilizerName.includes("鱼肥") || details.fertilizerName.includes("Fish")) return ["fish"];
+  if (details.fertilizerName.includes("高钾") || details.fertilizerName.includes("Morbloom")) return ["morbloom"];
+  if (details.fertilizerName.includes("钙镁") || details.fertilizerName.includes("Cal-Mag")) return ["cal-mag"];
+  return [];
+}
+
+function fertilizerShortLabel(key) {
+  const parts = fertilizerLabelParts(key);
+  return parts ? `${parts.name} ${parts.code}` : "";
+}
+
+function fertilizerLabelParts(key) {
+  const labels = {
+    fish: { name: "鱼肥", code: "5-1-1" },
+    morbloom: { name: "高钾肥", code: "0-10-10" },
+    "cal-mag": { name: "钙镁肥", code: "2-0-0" },
+  };
+  return labels[key] || "";
+}
+
+function fertilizerChipHtml(key) {
+  const parts = fertilizerLabelParts(key);
+  if (!parts) return "";
+  return `<span class="fertilizer-chip ${escapeHtml(key)}"><b>${escapeHtml(parts.name)}</b><small>${escapeHtml(parts.code)}</small></span>`;
+}
+
+function planMixText(task, plant) {
+  if (task.type === "浇水") return "清水，不加肥";
+  if (task.dosage) return task.dosage;
+  if (task.mix) return task.mix;
+  return inferCareDetails(task, plant).mix || task.note || "按包装说明";
+}
+
+function planEffectText(task, plant) {
+  if (task.type === "浇水") return "补水、保湿";
+  if (task.type === "施肥") {
+    const details = task.fertilizerName ? task : inferCareDetails(task, plant);
+    const text = `${task.title} ${task.note} ${details.fertilizerName} ${details.functionText}`.toLowerCase();
+    if ((text.includes("鱼肥") || text.includes("fish")) && (text.includes("钙镁") || text.includes("cal-mag"))) {
+      return "长根、长藤、防裂瓜";
+    }
+    if (text.includes("鱼肥") || text.includes("fish")) return "长根、长藤";
+    if (text.includes("高钾") || text.includes("morbloom") || text.includes("膨果")) return "坐果、膨果";
+    if (text.includes("钙镁") || text.includes("cal-mag")) return "补钙镁、防裂瓜";
+    return "补养分";
+  }
+  return task.note || task.title;
+}
+
+function renderFertilizerGuide() {
+  const plant = getSelectedPlant();
+  els.fertilizerGuide.innerHTML = "";
+  if (!plant) return;
+
+  const wrap = document.createElement("section");
+  wrap.className = "plan-support";
+  wrap.innerHTML = `<h3>肥料库</h3>`;
+  const cardGrid = document.createElement("div");
+  cardGrid.className = "fertilizer-card-grid";
+
+  const items = fertilizerDataForPlant(plant);
+  items.forEach((item) => {
+    const kind = fertilizerKindClass(item.kind);
+    const card = document.createElement("article");
+    card.className = `fertilizer-card ${kind}`;
+    card.innerHTML = `
+      ${
+        item.image
+          ? `<img class="fertilizer-photo" src="${escapeHtml(safeImageSrc(item.image))}" alt="${escapeHtml(item.name)}">`
+          : `<div class="product-visual ${kind}" aria-hidden="true"></div>`
+      }
+      <h4 class="fertilizer-name ${kind}">${escapeHtml(item.chineseName || item.name)}</h4>
+      ${item.chineseName ? `<p class="fertilizer-english">${escapeHtml(item.name)}</p>` : ""}
+      <p class="npk"><strong>编号：</strong>${escapeHtml(item.npk || "")}</p>
+      ${item.mix ? `<p><strong>建议用量：</strong>${escapeHtml(item.mix)}</p>` : ""}
+      ${item.functionText ? `<p><strong>功能：</strong>${escapeHtml(item.functionText)}</p>` : ""}
+      ${item.note ? `<p><strong>注意：</strong>${escapeHtml(item.note)}</p>` : ""}
+    `;
+    cardGrid.append(card);
+  });
+
+  const hydration = document.createElement("aside");
+  hydration.className = "hydration-card";
+  hydration.innerHTML = `
+    <h3>高温补水</h3>
+    <p><strong>超过30C / 86F：</strong>早上清水 06:30 - 07:30；傍晚补清水 18:30 - 18:50。</p>
+    <p><strong>超过35C / 95F：</strong>早上清水 06:30 - 07:30；晚上补清水 18:30 - 19:00。</p>
+    <ul>
+      <li>只浇清水，不加肥料。</li>
+      <li>避开中午高温时段补水。</li>
+      <li>根据天气、植物长势和土壤湿度调整时间。</li>
+      <li>保持滴灌区湿润即可，避免积水。</li>
+    </ul>
+  `;
+
+  const note = document.createElement("p");
+  note.className = "plan-note";
+  note.textContent = "备注：1汤勺约5ml；2.5加仑水约9.5升。连续阴雨天可减少施肥频率。";
+
+  wrap.append(cardGrid, hydration, note);
+  els.fertilizerGuide.append(wrap);
+}
+
+function fertilizerDataForPlant(plant) {
+  if (Array.isArray(plant.fertilizers) && plant.fertilizers.length) return plant.fertilizers;
+
+  const name = `${plant.name} ${plant.type}`.toLowerCase();
+  if (name.includes("南瓜") || name.includes("pumpkin")) {
+    return pumpkinFertilizers();
+  }
+
+  return [
+    {
+      name: "通用肥料说明",
+      kind: "general",
+      npk: "",
+      mix: "添加施肥行事后自动生成",
+      functionText: "会根据植物名称、事项标题和备注判断鱼肥、高钾肥等肥料用途。",
+      note: "不确定时按包装说明减半开始。",
+    },
+  ];
+}
+
+function fertilizerKindClass(kind) {
+  return ["fish", "high-potassium", "cal-mag", "general", "custom"].includes(kind) ? kind : "custom";
+}
+
+function inferCareDetails(task, plant) {
+  const text = `${task.title} ${task.note} ${plant.name} ${plant.type}`.toLowerCase();
+  if (task.type !== "施肥") {
+    return { fertilizerName: "", mix: "", functionText: "" };
+  }
+  if ((text.includes("鱼肥") || text.includes("fish")) && (text.includes("钙镁") || text.includes("cal-mag"))) {
+    return {
+      fertilizerName: "鱼肥 + 钙镁肥",
+      mix: "2.5加仑水 + 5汤勺 Alaska Fish Fertilizer + 2汤勺 Bloom City Cal-Mag",
+      dosage: "鱼肥5汤勺（约25ml）+ 钙镁肥2汤勺（约10ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补氮、补钙、补镁，预防缺钙、裂瓜，促进健康生长。",
+    };
+  }
+  if (text.includes("鱼肥") || text.includes("fish")) {
+    return {
+      fertilizerName: "鱼肥",
+      mix: text.includes("轻追") ? "2.5加仑水 + 2汤勺 Alaska Fish Fertilizer" : "2.5加仑水 + 5汤勺 Alaska Fish Fertilizer",
+      dosage: text.includes("轻追") ? "2汤勺（约10ml）" : "5汤勺（约25ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补充氮、氨基酸和微量元素，帮助长藤、促根和恢复长势。",
+    };
+  }
+  if (text.includes("高钾") || text.includes("钾") || text.includes("膨果")) {
+    return {
+      fertilizerName: "高钾肥",
+      mix: "2.5加仑水 + 2汤勺 Alaska Morbloom",
+      dosage: "2汤勺（约10ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补钾，帮助坐果、膨果和增强抗逆。",
+    };
+  }
+  if (text.includes("钙镁") || text.includes("cal-mag")) {
+    return {
+      fertilizerName: "钙镁肥",
+      mix: "2.5加仑水 + 2汤勺 Bloom City Cal-Mag",
+      dosage: "2汤勺（约10ml）",
+      wateringTime: "06:30 - 07:30",
+      functionText: "补钙和镁，预防缺钙、裂瓜、黄叶，提升抗逆性。",
+    };
+  }
+  if (text.includes("南瓜") || text.includes("pumpkin")) {
+    return {
+      fertilizerName: "高钾肥 / 鱼肥",
+      mix: "膨果期：2.5加仑水 + 2汤勺 Alaska Morbloom；叶色偏淡：2.5加仑水 + 5汤勺 Alaska Fish Fertilizer",
+      functionText: "高钾肥偏向果实膨大，鱼肥偏向长藤、促根和补微量元素。",
+    };
+  }
+  return {
+    fertilizerName: "通用肥",
+    mix: "按包装建议减半兑水",
+    functionText: "补充基础养分，观察叶色和长势后调整。",
+  };
+}
+
+function careDetailHtml(task, plant) {
+  const details = {
+    fertilizerName: task.fertilizerName || "",
+    mix: task.mix || "",
+    functionText: task.functionText || "",
+  };
+  if (!details.fertilizerName && task.type === "施肥") {
+    Object.assign(details, inferCareDetails(task, plant || { name: "", type: "" }));
+  }
+  if (!details.fertilizerName && !details.mix && !details.functionText) return "";
+
+  return `
+    <p class="care-detail">
+      ${details.fertilizerName ? `<span><strong>肥料：</strong>${escapeHtml(details.fertilizerName)}</span>` : ""}
+      ${details.mix ? `<span><strong>用量：</strong>${escapeHtml(details.mix)}</span>` : ""}
+      ${details.functionText ? `<span><strong>作用：</strong>${escapeHtml(details.functionText)}</span>` : ""}
+    </p>
+  `;
+}
+
+function renderTaskCollection(container, tasks, options = {}) {
+  container.innerHTML = "";
+  if (!tasks.length) {
+    container.append(emptyState(options.emptyText || "没有待办事项。"));
+    return;
+  }
+
+  tasks.forEach((task) => {
+    const plant = state.plants.find((item) => item.id === task.plantId);
+    const row = document.createElement("article");
+    const overdue = !task.done && task.dueDate < todayIso();
+    row.className = `task-row ${task.done ? "done" : ""}`;
+    row.innerHTML = `
+      <input type="checkbox" ${task.done ? "checked" : ""} aria-label="标记完成">
+      <div class="task-copy">
+        <div class="task-title">
+          <span class="badge ${task.type === "浇水" ? "water" : task.type === "施肥" ? "feed" : ""}">${escapeHtml(task.type)}</span>
+          ${overdue ? `<span class="badge overdue">逾期</span>` : ""}
+          <span>${escapeHtml(task.title)}</span>
+        </div>
+        <p class="task-meta">${formatDate(task.dueDate)} · ${escapeHtml(plant?.name || "未知植物")}${task.repeat !== "none" ? ` · ${repeatLabel(task.repeat)}` : ""}</p>
+        ${task.note ? `<p class="task-note">${escapeHtml(task.note)}</p>` : ""}
+        ${careDetailHtml(task, plant)}
+      </div>
+      ${options.hideDelete ? "" : `<button class="delete-button" type="button" aria-label="删除事项">×</button>`}
+    `;
+
+    row.querySelector("input").addEventListener("change", (event) => {
+      toggleTask(task.id, event.target.checked);
+    });
+    row.querySelector(".delete-button")?.addEventListener("click", () => {
+      state.tasks = state.tasks.filter((item) => item.id !== task.id);
+      persistAndRender();
+    });
+    container.append(row);
+  });
+}
+
+function toggleTask(taskId, done) {
+  const task = state.tasks.find((item) => item.id === taskId);
+  if (!task) return;
+  applyTaskDone(task, done);
+  persistAndRender();
+}
+
+function togglePlanTasks(taskIds, done) {
+  String(taskIds || "")
+    .split(",")
+    .filter(Boolean)
+    .forEach((taskId) => {
+      const task = state.tasks.find((item) => item.id === taskId);
+      if (task) applyTaskDone(task, done);
+    });
+  persistAndRender();
+}
+
+function applyTaskDone(task, done) {
+  task.done = done;
+  task.completedAt = done ? new Date().toISOString() : "";
+
+  if (done && task.repeat !== "none") {
+    const nextDate = nextRepeatDate(task.dueDate, task.repeat);
+    const duplicateExists = state.tasks.some(
+      (item) =>
+        item.plantId === task.plantId &&
+        item.type === task.type &&
+        item.title === task.title &&
+        item.dueDate === nextDate &&
+        !item.done,
+    );
+
+    if (!duplicateExists) {
+      state.tasks.push({
+        ...task,
+        id: crypto.randomUUID(),
+        dueDate: nextDate,
+        done: false,
+        completedAt: "",
+      });
+    }
+  }
+}
+
+function dueTodayTasks() {
+  const today = todayIso();
+  return state.tasks
+    .filter((task) => !task.done && task.dueDate <= today)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+}
+
+function todayCareTasks() {
+  const today = todayIso();
+  const careTypes = new Set(["浇水", "施肥"]);
+  return state.tasks
+    .filter((task) => !task.done && task.dueDate === today && careTypes.has(task.type))
+    .sort((a, b) => {
+      const plantA = state.plants.find((plant) => plant.id === a.plantId)?.name || "";
+      const plantB = state.plants.find((plant) => plant.id === b.plantId)?.name || "";
+      return plantA.localeCompare(plantB, "zh-CN") || a.type.localeCompare(b.type, "zh-CN");
+    });
+}
+
+function plantJournalItems(plant) {
+  const careLogs = state.tasks
+    .filter((task) => task.plantId === plant.id && task.done)
+    .map((task) => ({
+      kind: "care",
+      badgeClass: task.type === "浇水" ? "water" : task.type === "施肥" ? "feed" : "",
+      type: task.type,
+      title: task.title,
+      date: (task.completedAt || task.dueDate).slice(0, 10),
+      text: task.note || "",
+      extra: [task.fertilizerName ? `肥料：${task.fertilizerName}` : "", task.mix ? `用量：${task.mix}` : ""].filter(Boolean).join("；"),
+    }));
+
+  const growthLogs = plant.entries.map((entry) => ({
+    kind: "growth",
+    badgeClass: "",
+    type: "生长",
+    title: "生长记录",
+    date: entry.date,
+    text: growthSentence(entry),
+    extra: entry.image ? "已添加照片" : "",
+  }));
+
+  return [...careLogs, ...growthLogs].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+async function enableNotifications() {
+  if (!("Notification" in window)) {
+    alert("当前浏览器不支持桌面提醒。");
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") {
+    alert("提醒没有开启，仍会在页面里显示待办。");
+    return;
+  }
+
+  els.notifyButton.textContent = "提醒已开启";
+  clearInterval(reminderTimer);
+  notifyDueTasks();
+  reminderTimer = setInterval(notifyDueTasks, 1000 * 60 * 30);
+}
+
+function notifyDueTasks() {
+  const due = dueTodayTasks();
+  const key = `garden-notified-${todayIso()}`;
+  const already = JSON.parse(localStorage.getItem(key) || "[]");
+  const pending = due.filter((task) => !already.includes(task.id));
+
+  pending.slice(0, 3).forEach((task) => {
+    const plant = state.plants.find((item) => item.id === task.plantId);
+    new Notification(task.title, {
+      body: `${plant?.name || "植物"} · ${formatDate(task.dueDate)}`,
+    });
+    already.push(task.id);
+  });
+  localStorage.setItem(key, JSON.stringify(already));
+}
+
+function switchView(view) {
+  currentView = view;
+  document.body.dataset.view = view;
+  els.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.view === view));
+  Object.entries(els.views).forEach(([name, node]) => {
+    node.classList.toggle("active-view", name === view);
+  });
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `garden-records-${todayIso()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!Array.isArray(imported.plants) || !Array.isArray(imported.tasks)) {
+        throw new Error("Invalid data");
+      }
+      state.plants = imported.plants;
+      state.plants.forEach((plant) => {
+        plant.entries = Array.isArray(plant.entries) ? plant.entries : [];
+      });
+      state.tasks = imported.tasks;
+      selectedPlantId = imported.selectedPlantId || imported.plants[0]?.id || null;
+      persistAndRender();
+    } catch {
+      alert("导入失败，请选择之前导出的花园记录文件。");
+    } finally {
+      if (els.importInput) els.importInput.value = "";
+    }
+  };
+  reader.readAsText(file);
+}
+
+function getSelectedPlant() {
+  return state.plants.find((plant) => plant.id === selectedPlantId) || null;
+}
+
+function emptyState(message) {
+  const node = els.emptyTemplate.content.cloneNode(true);
+  node.querySelector("p").textContent = message;
+  return node;
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const date = new Date(`${value}T00:00:00`);
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "short",
+    day: "numeric",
+    weekday: "short",
+  }).format(date);
+}
+
+function formatShortDate(value) {
+  const date = new Date(`${value}T00:00:00`);
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+  }).format(date);
+}
+
+function startOfWeekIso(dateString) {
+  const date = new Date(`${dateString}T00:00:00`);
+  const day = date.getDay();
+  const offset = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function getWeekDates(weekStart) {
+  return WEEK_DAYS.map((_, index) => addDays(weekStart, index));
+}
+
+function addDays(dateString, days) {
+  const date = new Date(`${dateString}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function nextRepeatDate(dateString, repeat) {
+  if (repeat === "daily") return addDays(dateString, 1);
+  if (repeat === "3days") return addDays(dateString, 3);
+  if (repeat === "weekly") return addDays(dateString, 7);
+  if (repeat === "monthly") {
+    const date = new Date(`${dateString}T00:00:00`);
+    date.setMonth(date.getMonth() + 1);
+    return date.toISOString().slice(0, 10);
+  }
+  return dateString;
+}
+
+function repeatLabel(repeat) {
+  return {
+    daily: "每天重复",
+    "3days": "每 3 天重复",
+    weekly: "每周重复",
+    monthly: "每月重复",
+  }[repeat] || "";
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function safeImageSrc(value) {
+  const src = String(value || "");
+  if (src.startsWith("data:image/")) return src;
+  return fallbackPhoto;
+}
+
+function imageToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = () => {
+      img.onload = () => {
+        const maxSide = 1200;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+</script>
+  </body>
+</html>
