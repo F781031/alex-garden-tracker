@@ -1047,14 +1047,6 @@ dd {
   box-shadow: 0 10px 22px rgba(34, 53, 38, 0.1);
 }
 
-.plan-actions {
-  display: grid;
-  gap: 8px;
-  justify-items: center;
-}
-
-.plan-edit-button,
-.plan-delete-button,
 .fertilizer-delete-button {
   border: 1px solid rgba(171, 67, 67, 0.28);
   border-radius: 8px;
@@ -1065,18 +1057,6 @@ dd {
   cursor: pointer;
 }
 
-.plan-edit-button {
-  border-color: rgba(40, 97, 72, 0.28);
-  background: #f2f8ef;
-  color: var(--green);
-}
-
-.plan-edit-button:hover {
-  border-color: rgba(40, 97, 72, 0.5);
-  background: #e3f2df;
-}
-
-.plan-delete-button:hover,
 .fertilizer-delete-button:hover {
   border-color: rgba(171, 67, 67, 0.5);
   background: #ffeae3;
@@ -2867,16 +2847,6 @@ function renderWeeklyPlan() {
       }
     });
   });
-  board.querySelectorAll(".plan-delete-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      deletePlanTasks(button.dataset.taskIds);
-    });
-  });
-  board.querySelectorAll(".plan-edit-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      beginEditTask(button.dataset.taskId);
-    });
-  });
   els.weeklyPlan.append(board);
 }
 
@@ -2963,14 +2933,10 @@ function renderPlanDone(task, groupedTasks = [task]) {
   const allDone = groupedTasks.every((item) => item.done);
   const taskIds = groupedTasks.map((item) => item.id).join(",");
   return `
-    <div class="plan-actions">
-      <label class="plan-check-line ${allDone ? "done" : ""}">
-        <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
-        <span>${allDone ? "已完成" : "未完成"}</span>
-      </label>
-      <button class="plan-edit-button" type="button" data-task-id="${escapeHtml(task.id)}">修改</button>
-      <button class="plan-delete-button" type="button" data-task-ids="${escapeHtml(taskIds)}">删除</button>
-    </div>
+    <label class="plan-check-line ${allDone ? "done" : ""}">
+      <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
+      <span>${allDone ? "已完成" : "未完成"}</span>
+    </label>
   `;
 }
 
