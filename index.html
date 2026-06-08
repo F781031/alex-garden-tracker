@@ -1040,6 +1040,29 @@ dd {
   box-shadow: 0 10px 22px rgba(34, 53, 38, 0.1);
 }
 
+.plan-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.plan-delete-button,
+.fertilizer-delete-button {
+  border: 1px solid rgba(171, 67, 67, 0.28);
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: #fff7f3;
+  color: #9b2f2f;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.plan-delete-button:hover,
+.fertilizer-delete-button:hover {
+  border-color: rgba(171, 67, 67, 0.5);
+  background: #ffeae3;
+}
+
 .care-table tbody tr:nth-child(2) td {
   background: #f8fbff;
 }
@@ -1355,6 +1378,12 @@ dd {
   font-weight: 850;
 }
 
+.fertilizer-delete-button {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 8px;
+}
+
 .fertilizer-english {
   color: var(--muted);
   font-weight: 800;
@@ -1627,7 +1656,7 @@ dd {
     <div class="app-shell">
       <header class="topbar">
         <div class="hero">
-          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201400%20360%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23254534%22%2F%3E%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%234f7454%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b7c87c%22%2F%3E%20%3C%2FlinearGradient%3E%20%3CradialGradient%20id%3D%22sun%22%20cx%3D%2278%25%22%20cy%3D%2216%25%22%20r%3D%2242%25%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220.72%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220%22%2F%3E%20%3C%2FradialGradient%3E%20%3C%2Fdefs%3E%20%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sky)%22%2F%3E%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sun)%22%2F%3E%20%3Cpath%20d%3D%22M0%20230%20C170%20190%20270%20245%20430%20212%20C620%20174%20790%20214%20960%20178%20C1150%20139%201280%20156%201400%20112%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23213d2c%22%20opacity%3D%220.82%22%2F%3E%20%3Cpath%20d%3D%22M0%20282%20C170%20246%20280%20296%20440%20270%20C650%20236%20850%20284%201060%20228%20C1210%20188%201332%20200%201400%20170%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23587b47%22%20opacity%3D%220.9%22%2F%3E%20%3Cg%20fill%3D%22%23d6df88%22%20opacity%3D%220.62%22%3E%3Ccircle%20cx%3D%221030%22%20cy%3D%22185%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%221060%22%20cy%3D%22150%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221122%22%20cy%3D%22174%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%221188%22%20cy%3D%22142%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221254%22%20cy%3D%22166%22%20r%3D%226%22%2F%3E%3C%2Fg%3E%20%3C%2Fsvg%3E" alt="清晨家庭花园" />
+          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%201400%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22sky%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23254534%22%2F%3E%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%234f7454%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b7c87c%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22sun%22%20cx%3D%2278%25%22%20cy%3D%2216%25%22%20r%3D%2242%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220.72%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fff6b4%22%20stop-opacity%3D%220%22%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sky)%22%2F%3E%3Crect%20width%3D%221400%22%20height%3D%22360%22%20fill%3D%22url(%23sun)%22%2F%3E%3Cpath%20d%3D%22M0%20230%20C170%20190%20270%20245%20430%20212%20C620%20174%20790%20214%20960%20178%20C1150%20139%201280%20156%201400%20112%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23213d2c%22%20opacity%3D%220.82%22%2F%3E%3Cpath%20d%3D%22M0%20282%20C170%20246%20280%20296%20440%20270%20C650%20236%20850%20284%201060%20228%20C1210%20188%201332%20200%201400%20170%20L1400%20360%20L0%20360%20Z%22%20fill%3D%22%23587b47%22%20opacity%3D%220.9%22%2F%3E%3Cg%20fill%3D%22%23d6df88%22%20opacity%3D%220.62%22%3E%3Ccircle%20cx%3D%221030%22%20cy%3D%22185%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%221060%22%20cy%3D%22150%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221122%22%20cy%3D%22174%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%221188%22%20cy%3D%22142%22%20r%3D%224%22%2F%3E%3Ccircle%20cx%3D%221254%22%20cy%3D%22166%22%20r%3D%226%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="清晨家庭花园" />
           <div class="hero-shade"></div>
           <div class="hero-content">
             <div class="hero-title-row">
@@ -2209,7 +2238,7 @@ function pumpkinFertilizers() {
       mix: "2.5加仑水 + 5汤勺（约25ml）",
       functionText: "有机鱼肥，偏氮，帮助巨型南瓜长藤、长叶、促根和恢复长势。",
       note: "气味较重，浇根区即可，避免喷叶和接触瓜面。",
-      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23955125%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23955125%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1c24d%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E5-1-1%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23955125%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23955125%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1c24d%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E5-1-1%3C%2Ftext%3E%3C%2Fsvg%3E",
     },
     {
       id: "pumpkin-morbloom",
@@ -2220,7 +2249,7 @@ function pumpkinFertilizers() {
       mix: "2.5加仑水 + 2汤勺（约10ml）",
       functionText: "高磷高钾，适合开花、坐果和膨果期，帮助果实膨大并增强抗逆。",
       note: "先清水湿土，再滴灌肥水；避免浓肥直接烧根。",
-      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%2379429e%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%2379429e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f0a5c8%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E0-10-10%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%2379429e%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%2379429e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f0a5c8%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E0-10-10%3C%2Ftext%3E%3C%2Fsvg%3E",
     },
     {
       id: "pumpkin-cal-mag",
@@ -2231,7 +2260,7 @@ function pumpkinFertilizers() {
       mix: "2.5加仑水 + 2汤勺（约10ml）",
       functionText: "补钙、镁、铁，帮助预防缺钙、裂瓜、黄叶和缺素。",
       note: "通常和鱼肥同日少量合用；不要过量。",
-      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%20%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%20%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23ac342e%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23ac342e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%20%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1d05e%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%20%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E2-0-0%3C%2Ftext%3E%20%3C%2Fsvg%3E",
+      image: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20260%20320%22%3E%3Crect%20width%3D%22260%22%20height%3D%22320%22%20rx%3D%2230%22%20fill%3D%22%23f8f6ee%22%2F%3E%3Crect%20x%3D%2234%22%20y%3D%2210%22%20width%3D%22192%22%20height%3D%2254%22%20rx%3D%2214%22%20fill%3D%22%23e6e1d4%22%2F%3E%3Crect%20x%3D%2228%22%20y%3D%2272%22%20width%3D%22204%22%20height%3D%22218%22%20rx%3D%2222%22%20fill%3D%22%23ac342e%22%2F%3E%3Crect%20x%3D%2244%22%20y%3D%2296%22%20width%3D%22172%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23fff%22%20opacity%3D%220.9%22%2F%3E%3Ctext%20x%3D%22130%22%20y%3D%22130%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20font-weight%3D%22800%22%20fill%3D%22%23ac342e%22%3E%E8%82%A5%E6%96%99%3C%2Ftext%3E%3Cg%20opacity%3D%220.92%22%20fill%3D%22%23f1d05e%22%3E%3Cpolygon%20points%3D%2276%2C174%20100%2C160%20124%2C174%20124%2C202%20100%2C216%2076%2C202%22%2F%3E%3Cpolygon%20points%3D%22130%2C174%20154%2C160%20178%2C174%20178%2C202%20154%2C216%20130%2C202%22%2F%3E%3Cpolygon%20points%3D%22103%2C222%20127%2C208%20151%2C222%20151%2C250%20127%2C264%20103%2C250%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22130%22%20y%3D%22286%22%20text-anchor%3D%22middle%22%20font-family%3D%22Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%3E2-0-0%3C%2Ftext%3E%3C%2Fsvg%3E",
     },
   ];
 }
@@ -2793,6 +2822,11 @@ function renderWeeklyPlan() {
       }
     });
   });
+  board.querySelectorAll(".plan-delete-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      deletePlanTasks(button.dataset.taskIds);
+    });
+  });
   els.weeklyPlan.append(board);
 }
 
@@ -2879,10 +2913,13 @@ function renderPlanDone(task, groupedTasks = [task]) {
   const allDone = groupedTasks.every((item) => item.done);
   const taskIds = groupedTasks.map((item) => item.id).join(",");
   return `
-    <label class="plan-check-line ${allDone ? "done" : ""}">
-      <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
-      <span>${allDone ? "已完成" : "未完成"}</span>
-    </label>
+    <div class="plan-actions">
+      <label class="plan-check-line ${allDone ? "done" : ""}">
+        <input class="plan-checkbox" data-task-ids="${escapeHtml(taskIds)}" type="checkbox" ${allDone ? "checked" : ""} aria-label="标记${escapeHtml(task.title)}完成">
+        <span>${allDone ? "已完成" : "未完成"}</span>
+      </label>
+      <button class="plan-delete-button" type="button" data-task-ids="${escapeHtml(taskIds)}">删除</button>
+    </div>
   `;
 }
 
@@ -2983,6 +3020,7 @@ function renderFertilizerGuide() {
     const kind = fertilizerKindClass(item.kind);
     const card = document.createElement("article");
     card.className = `fertilizer-card ${kind}`;
+    card.dataset.fertilizerId = item.id || "";
     card.innerHTML = `
       ${
         item.image
@@ -2995,8 +3033,14 @@ function renderFertilizerGuide() {
       ${item.mix ? `<p><strong>建议用量：</strong>${escapeHtml(item.mix)}</p>` : ""}
       ${item.functionText ? `<p><strong>功能：</strong>${escapeHtml(item.functionText)}</p>` : ""}
       ${item.note ? `<p><strong>注意：</strong>${escapeHtml(item.note)}</p>` : ""}
+      <button class="fertilizer-delete-button" type="button" data-fertilizer-id="${escapeHtml(item.id || "")}">删除肥料</button>
     `;
     cardGrid.append(card);
+  });
+  cardGrid.querySelectorAll(".fertilizer-delete-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      deleteFertilizer(button.dataset.fertilizerId);
+    });
   });
 
   const hydration = document.createElement("aside");
@@ -3022,23 +3066,26 @@ function renderFertilizerGuide() {
 }
 
 function fertilizerDataForPlant(plant) {
-  if (Array.isArray(plant.fertilizers) && plant.fertilizers.length) return plant.fertilizers;
-
   const name = `${plant.name} ${plant.type}`.toLowerCase();
+  const hiddenIds = new Set(Array.isArray(plant.hiddenFertilizerIds) ? plant.hiddenFertilizerIds : []);
+  let defaults = [];
   if (name.includes("南瓜") || name.includes("pumpkin")) {
-    return pumpkinFertilizers();
+    defaults = pumpkinFertilizers();
+  } else {
+    defaults = [
+      {
+        id: "general-fertilizer-guide",
+        name: "通用肥料说明",
+        kind: "general",
+        npk: "",
+        mix: "添加施肥行事后自动生成",
+        functionText: "会根据植物名称、事项标题和备注判断鱼肥、高钾肥等肥料用途。",
+        note: "不确定时按包装说明减半开始。",
+      },
+    ];
   }
 
-  return [
-    {
-      name: "通用肥料说明",
-      kind: "general",
-      npk: "",
-      mix: "添加施肥行事后自动生成",
-      functionText: "会根据植物名称、事项标题和备注判断鱼肥、高钾肥等肥料用途。",
-      note: "不确定时按包装说明减半开始。",
-    },
-  ];
+  return mergeFertilizers(plant.fertilizers, defaults).filter((item) => !hiddenIds.has(item.id));
 }
 
 function fertilizerKindClass(kind) {
@@ -3176,6 +3223,13 @@ function togglePlanTasks(taskIds, done) {
   persistAndRender();
 }
 
+function deletePlanTasks(taskIds) {
+  const ids = new Set(String(taskIds || "").split(",").filter(Boolean));
+  if (!ids.size) return;
+  state.tasks = state.tasks.filter((task) => !ids.has(task.id));
+  persistAndRender();
+}
+
 function updatePlanField(taskIds, field, value) {
   const text = String(value || "").trim();
   const ids = String(taskIds || "").split(",").filter(Boolean);
@@ -3232,6 +3286,18 @@ function fertilizerNameFromText(text) {
   if (lowerText.includes("morbloom") || text.includes("高钾")) return "高钾肥";
   if (lowerText.includes("cal-mag") || text.includes("钙镁")) return "钙镁肥";
   return "";
+}
+
+function deleteFertilizer(fertilizerId) {
+  const plant = getSelectedPlant();
+  if (!plant || !fertilizerId) return;
+  plant.fertilizers = Array.isArray(plant.fertilizers) ? plant.fertilizers : [];
+  plant.hiddenFertilizerIds = Array.isArray(plant.hiddenFertilizerIds) ? plant.hiddenFertilizerIds : [];
+  plant.fertilizers = plant.fertilizers.filter((fertilizer) => fertilizer.id !== fertilizerId);
+  if (!plant.hiddenFertilizerIds.includes(fertilizerId)) {
+    plant.hiddenFertilizerIds.push(fertilizerId);
+  }
+  persistAndRender();
 }
 
 function applyTaskDone(task, done) {
