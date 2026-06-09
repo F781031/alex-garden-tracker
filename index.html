@@ -908,7 +908,7 @@ dd {
 
 .plan-board-title {
   display: grid;
-  grid-template-columns: 90px minmax(0, 1fr) 90px;
+  grid-template-columns: 90px minmax(0, 1fr) auto 90px;
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
@@ -921,6 +921,62 @@ dd {
   color: #0d5428;
   font-size: 1.45rem;
   line-height: 1.25;
+}
+
+.plan-title-actions,
+.support-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plan-title-actions {
+  justify-content: center;
+}
+
+.support-heading {
+  justify-self: start;
+}
+
+.support-heading h3 {
+  margin: 0;
+  border-radius: 8px;
+  padding: 9px 18px;
+  background: var(--green);
+  color: #fff;
+}
+
+.round-add-button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(40, 97, 72, 0.3);
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mini-clear-button {
+  min-height: 38px;
+  border: 1px solid rgba(171, 67, 67, 0.28);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fff7f3;
+  color: #9b2f2f;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.round-add-button:hover {
+  background: #1f523c;
+}
+
+.mini-clear-button:hover {
+  border-color: rgba(171, 67, 67, 0.5);
+  background: #ffeae3;
 }
 
 .vine-mark {
@@ -1574,6 +1630,19 @@ dd {
     min-height: 0;
   }
 
+  .plan-board-title {
+    grid-template-columns: 1fr;
+  }
+
+  .vine-mark {
+    display: none;
+  }
+
+  .plan-title-actions,
+  .support-heading {
+    justify-content: center;
+  }
+
   .timeline-item {
     grid-template-columns: 1fr;
   }
@@ -1737,7 +1806,7 @@ dd {
             <div id="weeklyPlan" class="week-grid" aria-label="周一到周日养护计划"></div>
             <div id="fertilizerGuide" class="fertilizer-guide"></div>
 
-            <form id="fertilizerForm" class="entry-form fertilizer-entry">
+            <form id="fertilizerForm" class="entry-form fertilizer-entry" hidden>
               <div class="section-heading tight">
                 <div>
                   <p class="label">肥料库</p>
@@ -1773,7 +1842,7 @@ dd {
               <button class="primary-button" type="submit">保存肥料</button>
             </form>
 
-            <form id="taskForm" class="entry-form care-entry">
+            <form id="taskForm" class="entry-form care-entry" hidden>
               <div class="section-heading tight">
                 <div>
                   <p class="label">计划</p>
@@ -2570,9 +2639,23 @@ function addTask() {
 function resetTaskForm() {
   delete els.taskForm.dataset.editing;
   els.taskForm.reset();
+  els.taskForm.hidden = true;
   els.taskDate.value = todayIso();
   els.taskSubmitButton.textContent = "加入本周计划";
   els.taskCancelEditButton.hidden = true;
+}
+
+function openTaskForm() {
+  els.taskForm.hidden = false;
+  els.taskDate.value = els.taskDate.value || els.calendarDate.value || todayIso();
+  els.taskForm.scrollIntoView({ behavior: "smooth", block: "center" });
+  requestAnimationFrame(() => els.taskTitle.focus());
+}
+
+function openFertilizerForm() {
+  els.fertilizerForm.hidden = false;
+  els.fertilizerForm.scrollIntoView({ behavior: "smooth", block: "center" });
+  requestAnimationFrame(() => els.fertilizerName.focus());
 }
 
 async function addFertilizer() {
@@ -2594,6 +2677,7 @@ async function addFertilizer() {
   });
 
   els.fertilizerForm.reset();
+  els.fertilizerForm.hidden = true;
   persistAndRender();
 }
 
@@ -2815,6 +2899,10 @@ function renderWeeklyPlan() {
     <div class="plan-board-title">
       <span class="vine-mark" aria-hidden="true"></span>
       <h3>${escapeHtml(plant.name)}施肥滴灌计划表</h3>
+      <div class="plan-title-actions" aria-label="本周计划操作">
+        <button class="round-add-button" id="openTaskFormButton" type="button" aria-label="添加本周计划">+</button>
+        <button class="mini-clear-button" id="clearWeekPlanButton" type="button">清除</button>
+      </div>
       <span class="vine-mark right" aria-hidden="true"></span>
     </div>
     <div class="plan-scroll">
@@ -2849,6 +2937,8 @@ function renderWeeklyPlan() {
       togglePlanTasks(event.target.dataset.taskIds || event.target.dataset.taskId, event.target.checked);
     });
   });
+  board.querySelector("#openTaskFormButton")?.addEventListener("click", openTaskForm);
+  board.querySelector("#clearWeekPlanButton")?.addEventListener("click", clearCurrentWeekPlan);
   board.querySelectorAll(".plan-edit-field").forEach((field) => {
     field.addEventListener("change", (event) => {
       updatePlanField(event.target.dataset.taskIds, event.target.dataset.field, event.target.value);
@@ -3041,7 +3131,12 @@ function renderFertilizerGuide() {
 
   const wrap = document.createElement("section");
   wrap.className = "plan-support";
-  wrap.innerHTML = `<h3>肥料库</h3>`;
+  wrap.innerHTML = `
+    <div class="support-heading">
+      <h3>肥料库</h3>
+      <button class="round-add-button" id="openFertilizerFormButton" type="button" aria-label="添加肥料">+</button>
+    </div>
+  `;
   const cardGrid = document.createElement("div");
   cardGrid.className = "fertilizer-card-grid";
 
@@ -3092,6 +3187,7 @@ function renderFertilizerGuide() {
   note.textContent = "备注：1汤勺约5ml；2.5加仑水约9.5升。连续阴雨天可减少施肥频率。";
 
   wrap.append(cardGrid, hydration, note);
+  wrap.querySelector("#openFertilizerFormButton")?.addEventListener("click", openFertilizerForm);
   els.fertilizerGuide.append(wrap);
 }
 
@@ -3261,9 +3357,22 @@ function deletePlanTasks(taskIds) {
   persistAndRender();
 }
 
+function clearCurrentWeekPlan() {
+  const plant = getSelectedPlant();
+  if (!plant) return;
+  const weekStart = startOfWeekIso(els.calendarDate.value || todayIso());
+  const days = getWeekDates(weekStart);
+  state.tasks = state.tasks.filter(
+    (task) => !(task.plantId === plant.id && task.dueDate >= days[0] && task.dueDate <= days[6]),
+  );
+  resetTaskForm();
+  persistAndRender();
+}
+
 function beginEditTask(taskId) {
   const task = state.tasks.find((item) => item.id === taskId);
   if (!task) return;
+  els.taskForm.hidden = false;
   els.taskForm.dataset.editing = task.id;
   els.taskType.value = task.type || "浇水";
   els.taskDate.value = task.dueDate || todayIso();
