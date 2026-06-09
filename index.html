@@ -1323,8 +1323,10 @@ dd {
 
 .fertilizer-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, 280px);
   gap: 10px;
+  justify-content: start;
+  align-items: stretch;
 }
 
 .fertilizer-card {
@@ -1332,6 +1334,8 @@ dd {
   grid-template-columns: 78px minmax(0, 1fr);
   column-gap: 12px;
   align-items: start;
+  width: 280px;
+  min-height: 238px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
@@ -1559,6 +1563,15 @@ dd {
   .profile-meta,
   .add-view .plant-form {
     grid-template-columns: 1fr;
+  }
+
+  .fertilizer-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fertilizer-card {
+    width: auto;
+    min-height: 0;
   }
 
   .timeline-item {
